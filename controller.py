@@ -1,5 +1,5 @@
 from view import Menu, player_addition_view, display_list_of_players, handle_false_id, tournament_data_input
-from model import Player, Tournament, list_all_players, check_chess_id_validity
+from model import Player, Tournament, list_all_players, check_chess_id_validity, sort_players_alphabetically
 import sys
 
 MAIN_MENU_CHOICES = {"Player management": "1", "Tournament management": "2", "Quit programme": "3"}
@@ -24,6 +24,7 @@ def player_menu_controller():
             handle_add_new_player()
         if decision_player_menu is PLAYER_MENU_CHOICES["Show full list of existing players"]:
             list_of_all_players = list_all_players()
+            list_of_all_players = sort_players_alphabetically(list_of_all_players)
             display_list_of_players(list_of_all_players)
         decision_player_menu = player_menu.display_menu()
 
