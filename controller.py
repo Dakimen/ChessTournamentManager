@@ -1,5 +1,5 @@
-from view import Menu, player_addition_view, display_list_of_players, handle_false_id
-from model import Player, list_all_players, check_chess_id_validity
+from view import Menu, player_addition_view, display_list_of_players, handle_false_id, tournament_data_input
+from model import Player, Tournament, list_all_players, check_chess_id_validity
 import sys
 
 MAIN_MENU_CHOICES = {"Player management": "1", "Tournament management": "2", "Quit programme": "3"}
@@ -31,7 +31,9 @@ def tournament_menu_controller():
     tournament_menu = Menu("Tournament menu", TOURNAMENT_MENU_CHOICES)
     decision_tournament_menu = tournament_menu.display_menu()
     if decision_tournament_menu is TOURNAMENT_MENU_CHOICES["Create new tournament"]:
-        pass
+        tournament_data = tournament_data_input()
+        new_tournament = Tournament(tournament_data)
+        new_tournament.save_tournament()
     if decision_tournament_menu is TOURNAMENT_MENU_CHOICES["Manage existing tournament"]:
         pass
     if decision_tournament_menu is TOURNAMENT_MENU_CHOICES["Back to Main Menu"]:

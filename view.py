@@ -51,15 +51,13 @@ def tournament_data_input():
     tournament_beginning_date = input("Please enter the start date of the tournament: ")
     tournament_end_date = input("Please enter the end date of this tournament: ")
     tournament_number_of_rounds = input("Please enter the number of rounds to take place (optional, defaults to 4): ")
-    tournament_registered_players_surnames = input("Please enter the surnames of players scheduled to participate: ")
     tournament_description = input("Please enter a description for this tournament (optional): ")
     all_data = {
                 "tournament_name": f"{tournament_name}", 
                 "tournament_place": f"{tournament_place}",
                 "tournament_beginning_date": f"{tournament_beginning_date}",
                 "tournament_end_date": f"{tournament_end_date}",
-                "tournament_registered_players_surnames": f"{tournament_registered_players_surnames}",
-                "tournament_description": f"{tournament_description}"}
-    if tournament_number_of_rounds is not "":
-        all_data["number_of_rounds"] = tournament_number_of_rounds
+                "tournament_description": f"{tournament_description}",
+                "number_of_rounds": f"{tournament_number_of_rounds}"
+                }
     return all_data
