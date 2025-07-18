@@ -1,8 +1,6 @@
-from tinydb import TinyDB, Query
+import storage
 import re
 
-player_db = TinyDB("player_database.json")
-tournament_db = TinyDB("tournament_database.json")
 class Player:
     def __init__(self, player_info):
         self.name = player_info["player_name"]
@@ -11,7 +9,7 @@ class Player:
         self.chess_national_id = player_info["chess_national_id"]
 
     def save_player(self):
-        player_db.insert({
+        storage.PLAYER_DB.insert({
             "name": self.name,
             "surname": self.surname,
             "date_of_birth": self.date_of_birth,
@@ -20,7 +18,7 @@ class Player:
         return True
 
 def list_all_players():
-    list_of_all_players = player_db.all()
+    list_of_all_players = storage.PLAYER_DB.all()
     return list_of_all_players
 
 def check_chess_id_validity(new_player_id, all_chess_ids):
@@ -46,9 +44,11 @@ class Tournament:
         if tournament_data["number_of_rounds"] is "":
             tournament_data["number_of_rounds"] = "4"
         self.number_of_rounds = tournament_data["number_of_rounds"]
+        self.rounds = None #for now
+        self.players_list = None #for now
 
     def save_tournament(self):
-        tournament_db.insert({
+        storage.TOURNAMENT_DB.insert({
             "name": self.name,
             "place": self.place,
             "dates": self.dates,

@@ -8,12 +8,11 @@ TOURNAMENT_MENU_CHOICES = {
     }
 
 def tournament_menu_controller():
-    tournament_menu = Menu("Tournament menu", TOURNAMENT_MENU_CHOICES)
-    decision_tournament_menu = tournament_menu.display_menu()
-    if TOURNAMENT_MENU_CHOICES[decision_tournament_menu]["text"] == "Back to Main Menu":
-          from menu_controllers.main_menu_controller import main_menu_controller
-          return main_menu_controller()
-    else:
+      tournament_menu = Menu("Tournament menu", TOURNAMENT_MENU_CHOICES)
+      decision_tournament_menu = tournament_menu.display_menu()
+      if TOURNAMENT_MENU_CHOICES[decision_tournament_menu]["text"] != "Back to Main Menu":
           while TOURNAMENT_MENU_CHOICES[decision_tournament_menu]["text"] != "Back to Main Menu":
-                TOURNAMENT_MENU_CHOICES[decision_tournament_menu]["action"]()
-                decision_tournament_menu = tournament_menu.display_menu()
+              TOURNAMENT_MENU_CHOICES[decision_tournament_menu]["action"]()
+              decision_tournament_menu = tournament_menu.display_menu()
+      from menu_controllers.main_menu_controller import main_menu_controller
+      return main_menu_controller()
