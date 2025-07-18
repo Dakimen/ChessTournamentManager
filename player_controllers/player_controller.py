@@ -1,5 +1,5 @@
-from models.model import Player, check_chess_id_validity, list_all_players, sort_players_alphabetically
-from views.main_view import player_addition_view, handle_false_id, display_list_of_players
+from models.player_models import Player, check_chess_id_validity, list_all_players, sort_players_alphabetically
+from views.player_menu_views import player_addition_view, handle_false_id, display_list_of_players
 
 def handle_add_new_player():
     new_player_data = player_addition_view()

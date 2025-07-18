@@ -1,4 +1,4 @@
-from views.main_view import Menu
+from views.menu import Menu
 from tournament_controllers.tournament_creation_controller import manage_create_tournament
 
 TOURNAMENT_MENU_CHOICES = {
