@@ -1,4 +1,4 @@
-import storage
+import storage_config as storage_config
 import re
 
 class Player:
@@ -9,7 +9,7 @@ class Player:
         self.chess_national_id = player_info["chess_national_id"]
 
     def save_player(self):
-        storage.PLAYER_DB.insert({
+        storage_config.PLAYER_DB.insert({
             "name": self.name,
             "surname": self.surname,
             "date_of_birth": self.date_of_birth,
@@ -18,7 +18,7 @@ class Player:
         return True
 
 def list_all_players():
-    list_of_all_players = storage.PLAYER_DB.all()
+    list_of_all_players = storage_config.PLAYER_DB.all()
     return list_of_all_players
 
 def check_chess_id_validity(new_player_id, all_chess_ids):
@@ -48,7 +48,7 @@ class Tournament:
         self.players_list = None #for now
 
     def save_tournament(self):
-        storage.TOURNAMENT_DB.insert({
+        storage_config.TOURNAMENT_DB.insert({
             "name": self.name,
             "place": self.place,
             "dates": self.dates,

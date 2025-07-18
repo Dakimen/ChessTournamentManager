@@ -1,4 +1,4 @@
-from view import Menu
+from views.main_view import Menu
 import sys
 from menu_controllers.player_menu_controller import player_menu_controller
 from menu_controllers.tournament_menu_controller import tournament_menu_controller

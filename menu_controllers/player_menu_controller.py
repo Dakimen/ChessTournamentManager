@@ -1,5 +1,5 @@
 from player_controllers import player_controller
-from view import Menu
+from views.main_view import Menu
 
 PLAYER_MENU_CHOICES = {
     "1": {"text": "Add new player", "key": "1", "action": player_controller.handle_add_new_player}, 
