@@ -1,17 +1,19 @@
-from view import Menu, tournament_data_input
-from model import Tournament
+from view import Menu
+from tournament_controllers.tournament_creation_controller import manage_create_tournament
 
-TOURNAMENT_MENU_CHOICES = {"Create new tournament": "1", "Manage existing tournament": "2", "Back to Main Menu": "3"}
+TOURNAMENT_MENU_CHOICES = {
+    "1": {"text": "Create new tournament", "key": "1", "action": manage_create_tournament}, 
+    "2": {"text": "Manage existing tournament", "key": "2", "action": None}, 
+    "3": {"text": "Back to Main Menu", "key": "3", "action": None}
+    }
 
 def tournament_menu_controller():
     tournament_menu = Menu("Tournament menu", TOURNAMENT_MENU_CHOICES)
     decision_tournament_menu = tournament_menu.display_menu()
-    if decision_tournament_menu is TOURNAMENT_MENU_CHOICES["Create new tournament"]:
-        tournament_data = tournament_data_input()
-        new_tournament = Tournament(tournament_data)
-        new_tournament.save_tournament()
-    if decision_tournament_menu is TOURNAMENT_MENU_CHOICES["Manage existing tournament"]:
-        pass
-    if decision_tournament_menu is TOURNAMENT_MENU_CHOICES["Back to Main Menu"]:
-        pass
-    
+    if TOURNAMENT_MENU_CHOICES[decision_tournament_menu]["text"] == "Back to Main Menu":
+          from menu_controllers.main_menu_controller import main_menu_controller
+          return main_menu_controller()
+    else:
+          while TOURNAMENT_MENU_CHOICES[decision_tournament_menu]["text"] != "Back to Main Menu":
+                TOURNAMENT_MENU_CHOICES[decision_tournament_menu]["action"]()
+                decision_tournament_menu = tournament_menu.display_menu()
