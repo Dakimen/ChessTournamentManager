@@ -2,9 +2,9 @@ class Menu:
     def __init__(self, menu_name, options):
         self.options = []
         self.option_keys = []
-        for option in options:
-            self.options.append(option)
-            self.option_keys.append(options[option])
+        for key in options:
+            self.options.append(options[key]["text"])
+            self.option_keys.append(options[key]["key"])
         self.menu_name = menu_name
         
     def display_menu(self):
