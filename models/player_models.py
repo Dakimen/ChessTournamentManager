@@ -12,33 +12,30 @@ class Player:
     def save_player(self):
         """Saves player to the database"""
         storage_config.PLAYER_DB.insert({
-            "name": self.name,
-            "surname": self.surname,
+            "player_name": self.name,
+            "player_surname": self.surname,
             "date_of_birth": self.date_of_birth,
             "chess_national_id": self.chess_national_id
         })
         return True
     
-class Tournament_Player(Player):
-    def __init__(self, surname, name, chess_national_id, date_of_birth=""):
-        self.surname = surname
-        self.name = name
-        self.chess_national_id = chess_national_id 
-        self.date_of_birth = date_of_birth
+    def stringify_self(self):
+        self_dict = {
+            "player_name": self.name,
+            "player_surname": self.surname,
+            "date_of_birth": self.date_of_birth,
+            "chess_national_id": self.chess_national_id
+        }
+        return self_dict
+    
+class Tournament_Player:
+    def __init__(self, player: Player):
+        self.player = player
         self.tournament_points = 0
 
-    def save_player(self, date_of_birth):
-        """Adds player to the database, called if he's not there when creating a tournament, requires a date of birth"""
-        self.date_of_birth = date_of_birth
-        return super().save_player()
-    
-    def check_if_in_db(self):
-        all_players = list_all_players()
-        for one_player in all_players:
-            if one_player["surname"] == self.surname and one_player["name"] == self.name:
-                if one_player["chess_national_id"] == self.chess_national_id:
-                    return True
-        return False
+    def get_player_score_list(self):
+        player_score = [self.player.stringify_self(), self.tournament_points]
+        return player_score
         
 
     
