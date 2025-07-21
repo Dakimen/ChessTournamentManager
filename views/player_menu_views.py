@@ -19,16 +19,6 @@ def handle_false_id():
           "AB00000")
     new_id = input("Please enter a valid ID: ")
     return new_id 
-
-def entered_correctly(new_player):
-    print(f"{new_player["player_name"]} {new_player["player_surname"]} doesn't appear to be in the database.")
-    sure = ""
-    while sure != "Y" or sure != "N":
-        sure = input("Are you sure their information was entered correctly? (Y/N): ")
-        if sure == "N":
-            return False
-        elif sure == "Y":
-            return True
         
 def get_date_of_birth():
     date_of_birth = input("Please enter their date of birth: ")

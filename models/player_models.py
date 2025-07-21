@@ -28,6 +28,7 @@ class Player:
         }
         return self_dict
     
+
 class Tournament_Player:
     def __init__(self, player: Player):
         self.player = player
@@ -56,9 +57,15 @@ def sort_players_alphabetically(players_to_sort):
     sorted_players = sorted(players_to_sort, key=lambda p: p["surname"])
     return sorted_players
 
+
 def check_if_in_db(new_player):
-    Player_existant = Query()
-    if storage_config.PLAYER_DB.search(Player_existant.surname == f"{new_player["player_surname"]}") != []:
-        if storage_config.PLAYER_DB.search(Player_existant.chess_national_id == f"{new_player["chess_national_id"]}"):
+    existant_player = Query()
+    if storage_config.PLAYER_DB.search(existant_player.player_surname == f"{new_player["player_surname"]}") != []:
+        if storage_config.PLAYER_DB.search(existant_player.chess_national_id == f"{new_player["chess_national_id"]}"):
             return True
     return False
+
+def get_player_from_db(player_data):
+    player_in_db = Query()
+    player_found = storage_config.PLAYER_DB.search(player_in_db.chess_national_id == f"{player_data["chess_national_id"]}")
+    return player_found[0] #player_found is a list containing a dict, we only need the dict
