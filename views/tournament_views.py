@@ -28,3 +28,15 @@ def tournament_participants_input(nb_of_participants):
         players.append(new_player)
         counter = counter + 1
     return players
+
+def show_ongoing_tournaments(ongoing_tournaments):
+    print("Choose ongoing tournament: ")
+    for tournament in ongoing_tournaments:
+        print(f"{tournament["key"]}: {tournament["name"]}, {tournament["dates"]}")
+    print(f"{ongoing_tournaments[-1]["key"] + 1}: Back to Tournament Menu")
+    choice = input(">>> ")
+    while int(choice) > ongoing_tournaments[-1]["key"] + 1:
+        print("Please enter a valid option: ")
+        choice = input(">>> ")
+    return choice
+

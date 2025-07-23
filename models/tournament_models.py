@@ -1,4 +1,5 @@
 import storage_config
+from tinydb import Query
 from models import round_models
 from models.player_models import Tournament_Player
 from models.round_models import FirstRound, SubsequentRound
@@ -27,26 +28,20 @@ class Tournament:
         for each_player in players:
             new_tournament_player = Tournament_Player(each_player)
             self.players_list.append(new_tournament_player)
-        if rounds == []:
-            self.rounds = []
-            self.bye_history = [] #In case the player number is uneven and each player needs to skip one round
-            self.match_history = []
-            first_round = FirstRound(self.players_list)
-            first_round.generate_matches()
-            self.rounds.append(first_round)
-            self.bye_history.append(first_round.get_bye_player())
-        """else:
-            self.rounds = None
-            self.bye_history = []
-            for round in rounds:
-                self.bye_history.append(round.get_bye_player())""" #Here we need to recreate existing rounds from data. Shouldn't be too hard
+        self.rounds = []
+        self.bye_history = [] 
+        self.match_history = []
+        if rounds != []:
+          for round in rounds:
+              self.rounds.append(round)
 
     def generate_round(self):
         new_round = None
         if len(self.rounds) == 0:
-            new_round = round_models.FirstRound("Round 1", self.players_list)
+            new_round = round_models.FirstRound(self.players_list)
             new_round.generate_matches()
             self.rounds.append(new_round)
+            self.bye_history.append(new_round.get_bye_player())
         else:
             n = len(self.rounds)
             new_round = round_models.SubsequentRound(f"Round {n}", self.players_list,
@@ -81,4 +76,33 @@ class Tournament:
             "players_list_raw": self.str_players,
             "rounds": round_dict
         })
-        
+
+def get_all_tournaments():
+    all_tournaments = storage_config.TOURNAMENT_DB.all()
+    return all_tournaments
+
+def find_tournament(name, place):
+    tournament = Query()
+    found_tournament_by_name = storage_config.TOURNAMENT_DB.search(tournament.name == name)
+    tournaments_in_place = storage_config.TOURNAMENT_DB.search(tournament.place == place)
+    for tournament in found_tournament_by_name:
+        if tournament in tournaments_in_place:
+            return tournament
+    else:
+        return None
+    
+def recreate_tournament_input(tourn_dict):
+    dates = tourn_dict["dates"]
+    dates = dates.split(" - ")
+    beginning_date = dates[0]
+    end_date = dates[1]
+    tourn_data = {
+        "tournament_name": tourn_dict["name"],
+        "tournament_place": tourn_dict["place"],
+        "tournament_beginning_date": beginning_date,
+        "tournament_end_date": end_date,
+        "tournament_description": tourn_dict["description"],
+        "number_of_rounds": tourn_dict["number_of_rounds"]
+    }
+    return tourn_data
+

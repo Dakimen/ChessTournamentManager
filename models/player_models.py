@@ -37,6 +37,17 @@ class Tournament_Player:
     def get_player_score_list(self):
         player_score = [self.player.stringify_self(), self.tournament_points]
         return player_score
+    
+    def stringify_self(self):
+        self_dict = {
+            "player":
+            {"player_name": self.player.name,
+            "player_surname": self.player.surname,
+            "date_of_birth": self.player.date_of_birth,
+            "chess_national_id": self.player.chess_national_id},
+            "tournament_points": self.tournament_points
+        }
+        return self_dict
         
 
     

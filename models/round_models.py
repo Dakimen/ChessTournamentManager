@@ -46,32 +46,37 @@ class Round:
             match_str_tuple = (dict_player1, dict_player2)
             matches_for_dict.append(match_str_tuple)
         bye_player = self.get_bye_player()
+        string_players = []
+        for player in self.players:
+            string_player = player.stringify_self()
+            string_players.append(string_player)
         round_dict = {
             "name": self.name,
             "start_date": self.start_date,
+            "end_date": self.end_date,
+            "players": string_players,
             "matches": matches_for_dict,
             "bye_player": bye_player.player.chess_national_id,
-            "finished": self.finished
+            "finished": self.finished,
+            "type": self.type
         }
         return round_dict
                 
-
-
-    """def stringfy_round(self):
-        own_data = {
-            "start_date": self.start_date,
-            "matches": 
-        }"""
-
+                
 class FirstRound(Round):
-    def __init__(self, players):
+    def __init__(self, players, matches = [], finished = False, start = None, end = 0, bye_player = None):
         self.name = "Round 1"
         self.players = players
-        self.finished = False
-        time = datetime.now()
-        self.start_date = time.strftime("%H:%M on %d/%m/%Y")
-        self.end_date = 0
-        self.matches = None
+        self.finished = finished
+        if start != None:
+            self.start_date = start
+        else:
+            time = datetime.now()
+            self.start_date = time.strftime("%H:%M on %d/%m/%Y")
+        self.end_date = end
+        self.matches = matches
+        self.type = "First Round"
+        self.bye_player = bye_player
 
     def generate_matches(self):
         random.shuffle(self.players)
@@ -91,14 +96,19 @@ class FirstRound(Round):
         return super().get_data()
 
 class SubsequentRound(Round):
-    def __init__(self, name, players):
+    def __init__(self, name, players, matches = [], finished = False, start = None, end = 0, bye_player = None):
         self.name = name
         self.players = players
-        self.finished = False
-        time = datetime.now()
-        self.start_date = time.strftime("%H:%M on %d/%m/%Y")
-        self.end_date = 0
-        self.matches = []
+        self.finished = finished
+        if start != None:
+            self.start_date = start
+        else:
+            time = datetime.now()
+            self.start_date = time.strftime("%H:%M on %d/%m/%Y")
+        self.end_date = end
+        self.matches - matches
+        self.bye_player = bye_player
+        self.type = "Subsequent Round"
 
     def generate_matches(self, match_history):
         pass
@@ -116,6 +126,26 @@ class SubsequentRound(Round):
     def get_data(self):
         return super().get_data()
 
-
-
-
+def recreate_rounds(rounds_list):
+    rounds = []
+    for round in rounds_list:
+        if round["type"] == "First Round":
+            recreated_round = FirstRound(round["players"], 
+                                         round["matches"], 
+                                         round["finished"],
+                                         round["start_date"],
+                                         round["end_date"],
+                                         round["bye_player"])
+            rounds.append(recreated_round)
+        elif round["type"] == "Subsequent Round":
+            recreated_round = SubsequentRound(round["name"],
+                                              round["players"],
+                                              round["matches"],
+                                              round["finished"],
+                                              round["start_date"],
+                                              round["end_date"],
+                                              round["bye_player"])
+            rounds.append(recreated_round)
+        else:
+            raise "Wrong round type"
+    return rounds

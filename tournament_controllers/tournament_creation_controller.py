@@ -9,6 +9,7 @@ def manage_create_tournament():
     players_raw_input = tournament_participants_input(nb_players)
     players = get_tournament_players(players_raw_input)
     new_tournament = Tournament(tournament_data, players)
+    new_tournament.generate_round()
     new_tournament.save_tournament()
 
 def calculate_number_of_players(nb_rounds):
@@ -29,7 +30,7 @@ def handle_not_in_db(new_player):
 def get_tournament_players(players_raw_input):
     tournament_players = []
     for player in players_raw_input:
-        player_segments = player.split(", ") #Splits into three parts: Surname, Name, ID
+        player_segments = player.split(", ") #Splits string into three parts: Surname, Name, ID
         new_player = {"player_surname": player_segments[0], "player_name": player_segments[1], "chess_national_id": player_segments[2]}
         if check_if_in_db(new_player) is False:
             unreg_player = handle_not_in_db(new_player)

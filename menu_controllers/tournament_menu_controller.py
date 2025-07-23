@@ -1,10 +1,13 @@
 from views.menu import Menu
 from tournament_controllers.tournament_creation_controller import manage_create_tournament
+from menu_controllers.choice_of_ongoing import ongoing_tournaments_list_menu
 
 TOURNAMENT_MENU_CHOICES = {
     "1": {"text": "Create new tournament", "key": "1", "action": manage_create_tournament}, 
-    "2": {"text": "Manage existing tournament", "key": "2", "action": None}, 
-    "3": {"text": "Back to Main Menu", "key": "3", "action": None}
+    "2": {"text": "Manage ongoing tournaments", "key": "2", "action": ongoing_tournaments_list_menu},
+    "3": {"text": "List all tournaments", "key": "3", "action": None},
+    "4": {"text": "Find a tournament", "key": "4", "action": None},
+    "5": {"text": "Back to Main Menu", "key": "5", "action": None}
     }
 
 def tournament_menu_controller():
