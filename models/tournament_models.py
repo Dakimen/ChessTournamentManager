@@ -1,7 +1,6 @@
 import storage_config
 from tinydb import Query
-from models import round_models
-from models.player_models import Tournament_Player
+from models.player_models import Tournament_Player, Player
 from models.round_models import FirstRound, SubsequentRound
 
 class Tournament:
@@ -21,13 +20,17 @@ class Tournament:
         else:
             self.number_of_rounds = int(tournament_data["number_of_rounds"])
         self.str_players = []
-        for each_player in players:
-            new_str_player = each_player.stringify_self()
-            self.str_players.append(new_str_player)
         self.players_list = []
         for each_player in players:
-            new_tournament_player = Tournament_Player(each_player)
-            self.players_list.append(new_tournament_player)
+            if isinstance(each_player, Player):
+                new_tournament_player = Tournament_Player(each_player)
+                self.players_list.append(new_tournament_player)
+            else:
+                new_tournament_player = Tournament_Player(each_player[0], each_player[1])
+                self.players_list.append(new_tournament_player)
+        for each_player in self.players_list:
+            new_str_player = each_player.stringify_self()
+            self.str_players.append(new_str_player)
         self.rounds = []
         self.bye_history = [] 
         self.match_history = []
@@ -38,13 +41,13 @@ class Tournament:
     def generate_round(self):
         new_round = None
         if len(self.rounds) == 0:
-            new_round = round_models.FirstRound(self.players_list)
+            new_round = FirstRound(self.players_list)
             new_round.generate_matches()
             self.rounds.append(new_round)
             self.bye_history.append(new_round.get_bye_player())
         else:
             n = len(self.rounds)
-            new_round = round_models.SubsequentRound(f"Round {n}", self.players_list,
+            new_round = SubsequentRound(f"Round {n}", self.players_list,
                                                       self.match_history, self.bye_history)
             new_round.generate_matches()
             self.rounds.append(new_round)
@@ -61,6 +64,12 @@ class Tournament:
                                       "did not participate in this round"))
             stringified_rounds.append(round_strings)
         return stringified_rounds
+    
+    def get_current_round(self):
+        for round in self.rounds:
+            if round.finished == False:
+                current_round = round
+        return current_round
 
     def save_tournament(self):
         """Saves the tournament to the database"""
@@ -81,10 +90,10 @@ def get_all_tournaments():
     all_tournaments = storage_config.TOURNAMENT_DB.all()
     return all_tournaments
 
-def find_tournament(name, place):
+def find_tournament(name, dates):
     tournament = Query()
     found_tournament_by_name = storage_config.TOURNAMENT_DB.search(tournament.name == name)
-    tournaments_in_place = storage_config.TOURNAMENT_DB.search(tournament.place == place)
+    tournaments_in_place = storage_config.TOURNAMENT_DB.search(tournament.dates == dates)
     for tournament in found_tournament_by_name:
         if tournament in tournaments_in_place:
             return tournament
@@ -106,3 +115,26 @@ def recreate_tournament_input(tourn_dict):
     }
     return tourn_data
 
+def update_player_points_in_db(tournament = Tournament):
+    tournament_in_db = Query()
+    tournament_doc = storage_config.TOURNAMENT_DB.search(tournament_in_db.name == tournament.name)[0]
+    tournament_id = tournament_doc.doc_id
+    tournament.str_players = []
+    for player in tournament.players_list:
+        str_player = player.stringify_self()
+        tournament.str_players.append(str_player)
+    storage_config.TOURNAMENT_DB.update({"players_list_raw": tournament.str_players}, doc_ids = [tournament_id])
+
+def mark_round_finished(round, tournament):
+    round.finished = True
+    tournament_in_db = Query()
+    tournament_doc = storage_config.TOURNAMENT_DB.search(tournament_in_db.name == tournament.name)[0]
+    tournament_id = tournament_doc.doc_id
+    updated_rounds = []
+    for round in tournament.rounds:
+        upd_round = round.get_data()
+        updated_rounds.append(upd_round)
+    storage_config.TOURNAMENT_DB.update({"rounds": updated_rounds}, doc_ids = [tournament_id])
+    tournament.rounds = []
+    for new_round in updated_rounds:
+        tournament.rounds.append(new_round)

@@ -30,9 +30,9 @@ class Player:
     
 
 class Tournament_Player:
-    def __init__(self, player: Player):
+    def __init__(self, player: Player, player_tournament_points = 0):
         self.player = player
-        self.tournament_points = 0
+        self.tournament_points = player_tournament_points
 
     def get_player_score_list(self):
         player_score = [self.player.stringify_self(), self.tournament_points]
@@ -80,3 +80,12 @@ def get_player_from_db(player_data):
     player_in_db = Query()
     player_found = storage_config.PLAYER_DB.search(player_in_db.chess_national_id == f"{player_data["chess_national_id"]}")
     return player_found[0] #player_found is a list containing a dict, we only need the dict
+
+def get_participating_players_from_data(tourn_data):
+    player_tuples = []
+    for player in tourn_data["players_list_raw"]:
+        player_obj = Player(player["player"])
+        player_points = player["tournament_points"]
+        player_tuple = (player_obj, player_points)
+        player_tuples.append(player_tuple)
+    return player_tuples

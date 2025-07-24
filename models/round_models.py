@@ -1,6 +1,7 @@
 #import storage_config
 from datetime import datetime
 import random
+from models.player_models import Tournament_Player
 
 class Round:
     def generate_matches(self):
@@ -36,27 +37,50 @@ class Round:
     def get_data(self):
         matches_for_dict = []
         for match in self.matches:
-            dict_player1 = {
-                "player_surname": match[0].player.surname,
-                "player_chess_national_id": match[0].player.chess_national_id
-            }
-            dict_player2 = {
-                "player_surname": match[1].player.surname,
-                "player_chess_national_id": match[1].player.chess_national_id}
-            match_str_tuple = (dict_player1, dict_player2)
-            matches_for_dict.append(match_str_tuple)
+            if isinstance(match[0], Tournament_Player):
+                dict_player1 = {
+                    "player_surname": match[0].player.surname,
+                    "player_name": match[0].player.name,
+                    "player_chess_national_id": match[0].player.chess_national_id
+                }
+                dict_player2 = {
+                    "player_surname": match[1].player.surname,
+                    "player_name": match[1].player.name,
+                    "player_chess_national_id": match[1].player.chess_national_id}
+                match_str_tuple = (dict_player1, dict_player2)
+                matches_for_dict.append(match_str_tuple)
+            else:
+                dict_player1 = {
+                    "player_surname": match[0]["player_surname"],
+                    "player_name": match[0]["player_name"],
+                    "player_chess_national_id": match[0]["player_chess_national_id"]
+                }
+                dict_player2 = {
+                    "player_surname": match[1]["player_surname"],
+                    "player_name": match[1]["player_name"],
+                    "player_chess_national_id": match[1]["player_chess_national_id"]
+                }
+                match_str_tuple = (dict_player1, dict_player2)
+                matches_for_dict.append(match_str_tuple)
         bye_player = self.get_bye_player()
+        if isinstance(bye_player, Tournament_Player):
+            bye_player_chess_national_id = bye_player.player.chess_national_id
+        else:
+            bye_player_chess_national_id = bye_player["player"]["chess_national_id"]
         string_players = []
-        for player in self.players:
-            string_player = player.stringify_self()
-            string_players.append(string_player)
+        if isinstance(self.players[0], Tournament_Player):
+            for player in self.players:
+                string_player = player.stringify_self()
+                string_players.append(string_player)
+        else:
+            string_players = self.players
         round_dict = {
             "name": self.name,
             "start_date": self.start_date,
             "end_date": self.end_date,
             "players": string_players,
             "matches": matches_for_dict,
-            "bye_player": bye_player.player.chess_national_id,
+            "bye_player": bye_player_chess_national_id,
             "finished": self.finished,
             "type": self.type
         }
@@ -149,3 +173,19 @@ def recreate_rounds(rounds_list):
         else:
             raise "Wrong round type"
     return rounds
+
+def update_points(result, match, tournament):
+    for tournament_player in tournament.players_list:
+        if tournament_player.player.chess_national_id == match[0]["player_chess_national_id"]:
+            player1 = tournament_player
+        if tournament_player.player.chess_national_id == match[1]["player_chess_national_id"]:
+            player2 = tournament_player
+    if result == "draw":
+        player1.tournament_points += 0.5
+        player2.tournament_points += 0.5
+    else: 
+        if result == player1.player.chess_national_id:
+            player1.tournament_points += 1
+        if result == player2.player.chess_national_id:
+            player2.tournament_points += 1
+            

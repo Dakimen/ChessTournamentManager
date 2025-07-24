@@ -30,6 +30,9 @@ def tournament_participants_input(nb_of_participants):
     return players
 
 def show_ongoing_tournaments(ongoing_tournaments):
+    if(ongoing_tournaments) == []:
+        print("No ongoing tournaments")
+        return None
     print("Choose ongoing tournament: ")
     for tournament in ongoing_tournaments:
         print(f"{tournament["key"]}: {tournament["name"]}, {tournament["dates"]}")
@@ -39,4 +42,34 @@ def show_ongoing_tournaments(ongoing_tournaments):
         print("Please enter a valid option: ")
         choice = input(">>> ")
     return choice
+
+def show_current_round_info(matches):
+    for match in matches:
+        print((f"{match[0]["player_surname"]} "
+               f"{match[0]["player_name"]} "
+               f"{match[0]["player_chess_national_id"]} "
+               "vs "
+               f"{match[1]["player_surname"]} "
+               f"{match[1]["player_name"]} "
+               f"{match[1]["player_chess_national_id"]}"))
+        
+def get_round_results(matches):
+    print("Would you like to add results to these matches? Y/N")
+    choice = input(">>> ")
+    if choice == "Y":
+        matches_result_list = []
+        for match in matches:
+            print((f"{match[0]["player_surname"]} "
+               f"{match[0]["player_name"]} "
+               f"{match[0]["player_chess_national_id"]} "
+               "vs "
+               f"{match[1]["player_surname"]} "
+               f"{match[1]["player_name"]} "
+               f"{match[1]["player_chess_national_id"]}"))
+            print("Please enter winner's id or type 'draw'")
+            result = input(">>> ")
+            matches_result_list.append(result)
+        return matches_result_list
+    else:
+        return None
 

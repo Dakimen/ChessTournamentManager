@@ -19,6 +19,8 @@ def ongoing_tournaments_list_menu():
         ongoing_tournaments_info.append(ongoing_dict)
         key += 1
     choice = show_ongoing_tournaments(ongoing_tournaments_info)
+    if choice == None:
+        return None
     if int(choice) == ongoing_tournaments_info[-1]["key"] + 1:
         from menu_controllers.tournament_menu_controller import tournament_menu_controller
         return tournament_menu_controller()
