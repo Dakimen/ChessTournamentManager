@@ -8,7 +8,12 @@ def manage_current_round(tournament_base_info):
     tourn_input = recreate_tournament_input(found_data)
     participants = get_participating_players_from_data(found_data)
     found_rounds = recreate_rounds(found_data["rounds"])
-    recreated_tournament = Tournament(tourn_input, participants, found_rounds)
+    for round in found_rounds:
+        round.recreate_matches()
+    for round in found_rounds:
+        round.recreate_players()
+    print(found_data["bye_history"])
+    recreated_tournament = Tournament(tourn_input, participants, found_rounds, found_data["bye_history"])
     current_round = recreated_tournament.get_current_round()
     show_current_round_info(current_round.matches)
     result_list = get_round_results(current_round.matches)
@@ -20,8 +25,8 @@ def manage_current_round(tournament_base_info):
             update_points(result_list[n], current_round.matches[n], recreated_tournament)
             n += 1
     update_player_points_in_db(recreated_tournament)
+    recreated_tournament.generate_round()
     mark_round_finished(current_round, recreated_tournament)
-    #Next we generate a new round
     
 
 

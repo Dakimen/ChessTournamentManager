@@ -30,7 +30,7 @@ class Player:
     
 
 class Tournament_Player:
-    def __init__(self, player: Player, player_tournament_points = 0):
+    def __init__(self, player: Player, player_tournament_points = 0, had_bye = False):
         self.player = player
         self.tournament_points = player_tournament_points
 
