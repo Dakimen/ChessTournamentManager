@@ -1,4 +1,5 @@
-from models.tournament_models import find_tournament, recreate_tournament_input, Tournament, update_player_points_in_db, mark_round_finished
+from models.tournament_models import find_tournament, recreate_tournament_input, Tournament
+from models.tournament_models import update_player_points_in_db, mark_round_finished
 from models.player_models import get_participating_players_from_data
 from models.round_models import recreate_rounds, update_points
 from views.tournament_views import show_current_round_info, get_round_results
@@ -12,8 +13,7 @@ def manage_current_round(tournament_base_info):
         round.recreate_matches()
     for round in found_rounds:
         round.recreate_players()
-    print(found_data["bye_history"])
-    recreated_tournament = Tournament(tourn_input, participants, found_rounds, found_data["bye_history"])
+    recreated_tournament = Tournament(tourn_input, participants, found_rounds)
     current_round = recreated_tournament.get_current_round()
     show_current_round_info(current_round.matches)
     result_list = get_round_results(current_round.matches)
@@ -27,6 +27,11 @@ def manage_current_round(tournament_base_info):
     update_player_points_in_db(recreated_tournament)
     recreated_tournament.generate_round()
     mark_round_finished(current_round, recreated_tournament)
+    
+    for round in recreated_tournament.rounds:
+        print(round.name)
+        for match in round.matches:
+            print(match)
     
 
 

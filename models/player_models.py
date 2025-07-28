@@ -30,9 +30,22 @@ class Player:
     
 
 class Tournament_Player:
-    def __init__(self, player: Player, player_tournament_points = 0, had_bye = False):
+    def __init__(self, player: Player, tournament_id, player_tournament_points = 0):
         self.player = player
         self.tournament_points = player_tournament_points
+        self.tournament_id = tournament_id
+
+    def __eq__(self, other):
+        if isinstance(other, Tournament_Player):
+            return self.tournament_id == other.tournament_id
+        else:
+            return False
+
+    def __hash__(self):
+        return hash(self.tournament_id)
+    
+    def __repr__(self):
+        return f"{self.player.surname}"
 
     def get_player_score_list(self):
         player_score = [self.player.stringify_self(), self.tournament_points]
@@ -45,11 +58,10 @@ class Tournament_Player:
             "player_surname": self.player.surname,
             "date_of_birth": self.player.date_of_birth,
             "chess_national_id": self.player.chess_national_id},
-            "tournament_points": self.tournament_points
+            "tournament_points": self.tournament_points,
+            "tournament_id": self.tournament_id
         }
         return self_dict
-        
-
     
 
 def list_all_players():
@@ -85,7 +97,8 @@ def get_participating_players_from_data(tourn_data):
     player_tuples = []
     for player in tourn_data["players_list_raw"]:
         player_obj = Player(player["player"])
+        player_tournament_id = player["tournament_id"]
         player_points = player["tournament_points"]
-        player_tuple = (player_obj, player_points)
+        player_tuple = (player_obj, player_tournament_id, player_points)
         player_tuples.append(player_tuple)
     return player_tuples
