@@ -33,7 +33,8 @@ def manage_current_round(tournament_base_info):
         for match in round.matches:
             print(match)
     
-
+def show_players_alphabetic(tournament):
+    pass
 
 def show_leaderboard(tournament):
     pass
