@@ -6,7 +6,7 @@ class Menu:
             self.options.append(options[key]["text"])
             self.option_keys.append(options[key]["key"])
         self.menu_name = menu_name
-        
+
     def display_menu(self):
         print((
            f"{self.menu_name}"
@@ -21,4 +21,3 @@ class Menu:
                 print("Please insert a valid option")
                 user_choice = input(">>> ")
         return user_choice
-          
