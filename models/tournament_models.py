@@ -112,7 +112,6 @@ class Tournament:
         for round in self.rounds:
             for match in round.matches:
                 match_tup = (match[0].tournament_id, match[1].tournament_id)
-                print(match_tup)
                 matches.append(match_tup)
         self.match_history = matches
 

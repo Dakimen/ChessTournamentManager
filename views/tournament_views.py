@@ -175,6 +175,11 @@ def get_round_results(matches):
                    f"{match[1].player.chess_national_id}"))
             print("Please enter winner's id or type 'draw'")
             result = input(">>> ")
+            player1_id = f"{match[0].player.chess_national_id}"
+            player2_id = f"{match[1].player.chess_national_id}"
+            while result not in ("draw", player1_id, player2_id):
+                print("Please enter a valid player's id or type 'draw'")
+                result = input(">>> ")
             matches_result_list.append(result)
         return matches_result_list
     else:
