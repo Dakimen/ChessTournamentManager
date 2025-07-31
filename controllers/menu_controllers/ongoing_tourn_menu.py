@@ -1,5 +1,6 @@
 from views.menu import Menu
-from tournament_controllers.round_controller import manage_current_round, show_leaderboard, show_round_history, show_players_alphabetic
+from controllers.tournament_controllers.round_controller import manage_current_round, show_leaderboard 
+from controllers.tournament_controllers.round_controller import show_round_history, show_players_alphabetic
 
 UNFINISHED_TOURNAMENT_MENU = {
     "1": {"text": "Manage current round", "key": "1", "action": manage_current_round},
@@ -17,5 +18,5 @@ def ongoing_tournament_menu(chosen_tournament):
             UNFINISHED_TOURNAMENT_MENU[choice]["action"](chosen_tournament)
             choice = tourn_management_menu.display_menu()
     else:
-        from menu_controllers.choice_of_ongoing import ongoing_tournaments_list_menu
+        from controllers.menu_controllers.choice_of_ongoing import ongoing_tournaments_list_menu
         return ongoing_tournaments_list_menu()

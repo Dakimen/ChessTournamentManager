@@ -13,5 +13,9 @@ def handle_add_new_player():
 
 def get_all_players_alphabetically():
     players_unsorted = list_all_players()
-    players_sorted = sort_players_alphabetically(players_unsorted)
+    players_unsort_obj = []
+    for player in players_unsorted:
+        obj_player = Player(player)
+        players_unsort_obj.append(obj_player)
+    players_sorted = sort_players_alphabetically(players_unsort_obj)
     display_list_of_players(players_sorted)

@@ -159,4 +159,3 @@ def mark_round_finished(current_round, tournament):
         updated_rounds.append(upd_round)
     storage_config.TOURNAMENT_DB.update({"rounds": updated_rounds}, doc_ids = [tournament_id])
 
-

@@ -11,7 +11,7 @@ def player_addition_view():
 
 def display_list_of_players(list_of_players):
     for player in list_of_players:
-        print(f"{player["player_name"]} {player["player_surname"]}, {player["date_of_birth"]}, {player["chess_national_id"]}")
+        print(f"{player.surname} {player.name}, {player.date_of_birth}, {player.chess_national_id}")
 
 def handle_false_id():
     print("ID you entered appears to be taken or incorrect.")

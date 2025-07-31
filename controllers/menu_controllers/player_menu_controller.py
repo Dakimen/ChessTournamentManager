@@ -1,4 +1,4 @@
-from player_controllers import player_controller
+from controllers.player_controllers import player_controller
 from views.menu import Menu
 
 PLAYER_MENU_CHOICES = {
@@ -14,6 +14,6 @@ def player_menu_controller():
         while PLAYER_MENU_CHOICES[decision_player_menu]["text"] != "Back to Main Menu":
             PLAYER_MENU_CHOICES[decision_player_menu]["action"]()
             decision_player_menu = player_menu.display_menu()
-    from menu_controllers.main_menu_controller import main_menu_controller
+    from controllers.menu_controllers.main_menu_controller import main_menu_controller
     return main_menu_controller()
     

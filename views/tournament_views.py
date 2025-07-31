@@ -1,17 +1,18 @@
 import re
+from views.round_views import display_round_history
 
 def tournament_data_input():
     suitable_names = re.compile(r'^[a-zA-Z0-9,. ]*$')
     suitable_numbers = re.compile(r"^[0-9]{2}$")
-    suitable_dates = re.compile(r"^[0-9]{2}/[0-9]{2}/[0-9]{4}")
+    suitable_dates = re.compile(r"^[0-9]{2}/[0-9]{2}/[0-9]{4}$")
     tournament_data_list = []
     tournament_data_list.append(tournament_name_input(suitable_names))
     tournament_data_list.append(tournament_place_input(suitable_names))
     beginning_and_end = tournament_dates_input(suitable_dates)
     tournament_data_list.append(beginning_and_end[0])
     tournament_data_list.append(beginning_and_end[1])
-    tournament_data_list.append(tournament_n_of_rounds_input(suitable_numbers))
     tournament_data_list.append(tournament_description_input(suitable_names))
+    tournament_data_list.append(tournament_n_of_rounds_input(suitable_numbers))
     all_data_dict = dict_all_data(tournament_data_list)
     return all_data_dict
 
@@ -128,3 +129,38 @@ def get_round_results(matches):
     else:
         return None
 
+def display_leaderboard(players_and_points):
+    for player in players_and_points:
+        print(f"pts: {player[1]}. {player[0].surname} {player[0].name}, {player[0].chess_national_id}")
+
+def display_all_tournaments(all_tournaments):
+    print("")
+    for tournament in all_tournaments:
+        print(f"Name: {tournament.name}")
+        print(f"Place: {tournament.place}")
+        print(f"Dates: {tournament.dates}")
+        print(f"Description: {tournament.description}")
+        print("Players: ")
+        for player in tournament.players_list:
+            print(f"{player.player.surname} {player.player.name}, {player.player.chess_national_id}")
+        print("Rounds: ")
+        display_round_history(tournament.rounds)
+        print("")
+
+def find_tournament_input():
+    suitable_names = re.compile(r'^[a-zA-Z0-9,. ]*$')
+    suitable_dates = re.compile(r"^[0-9]{2}/[0-9]{2}/[0-9]{4} - [0-9]{2}/[0-9]{2}/[0-9]{4}$")
+    print("Tournament search")
+    name = input("Please insert tournament name: ")
+    while not suitable_names.fullmatch(name):
+        print("Please avoid using anything but letters, numbers, commas, spaces and dots")
+        name = input("Please insert tournament name: ")
+    dates = input("Please insert tournament dates in a 'dd/mm/yyyy - dd/mm/yyyy' format: ")
+    while not suitable_dates.fullmatch(dates):
+        print("Please use the 'dd/mm/yyyy - dd/mm/yyyy' format, "
+              "note that days and months must be two digits. Ex: 06/06/2025 - 07/07/2025")
+        dates = input("Please insert tournament dates in a 'dd/mm/yyyy - dd/mm/yyyy' format: ")
+    return name, dates
+
+def tournament_not_found():
+    print("\nTournament not found!\n")

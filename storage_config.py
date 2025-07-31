@@ -8,6 +8,3 @@ class PrettyJSONStorage(JSONStorage):
 
 PLAYER_DB = TinyDB("player_database.json", storage = PrettyJSONStorage)
 TOURNAMENT_DB = TinyDB("tournament_database.json", storage = PrettyJSONStorage)
-
-
-

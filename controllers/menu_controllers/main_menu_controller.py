@@ -1,7 +1,7 @@
 from views.menu import Menu
 import sys
-from menu_controllers.player_menu_controller import player_menu_controller
-from menu_controllers.tournament_menu_controller import tournament_menu_controller
+from controllers.menu_controllers.player_menu_controller import player_menu_controller
+from controllers.menu_controllers.tournament_menu_controller import tournament_menu_controller
 
 MAIN_MENU_CHOICES = {
     "1": {"text": "Player management", "key": "1", "action": player_menu_controller},

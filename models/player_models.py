@@ -77,7 +77,7 @@ def check_chess_id_validity(new_player_id, all_chess_ids):
     return True
 
 def sort_players_alphabetically(players_to_sort):
-    sorted_players = sorted(players_to_sort, key=lambda p: p["player_surname"])
+    sorted_players = sorted(players_to_sort, key=lambda p: p.surname)
     return sorted_players
 
 
