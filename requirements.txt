@@ -1,0 +1,6 @@
+# Core dependencies
+tinydb==4.8.0
+
+# Code quality tools
+flake8==7.0.0
+flake8-html==0.4.3
