@@ -136,7 +136,7 @@ class SubsequentRound(Round):
         self.players = players
         self.number = number
         self.finished = finished
-        if start is None:
+        if start is not None:
             self.start_date = start
         else:
             time = datetime.now()
@@ -158,16 +158,39 @@ class SubsequentRound(Round):
 
     def generate_matches(self, match_history, removed_list):
         players_copy = self.players[:]
-        players_to_try = [players_copy]
         if len(players_copy) % 2 != 0:
-            players_to_try = [
-                [p for p in players_copy if p != to_remove]
+            candidates = [
+                (to_remove, [p for p in players_copy if p != to_remove])
                 for to_remove in players_copy
-                if to_remove not in removed_list
-            ]
-        for candidate_players in players_to_try:
+                if to_remove not in removed_list]
+            for removed_player, candidate_players in candidates:
+                self.matches = []
+                sorted_players = self.generate_sorted_players(candidate_players)
+                used = set()
+                success = True
+                for i, (player, _) in enumerate(sorted_players):
+                    if player in used:
+                        continue
+                    found = False
+                    for j in range(i + 1, len(sorted_players)):
+                        opponent, _ = sorted_players[j]
+                        if opponent in used:
+                            continue
+                        if not have_played(player, opponent, match_history):
+                            self.matches.append((player, opponent))
+                            used.add(player)
+                            used.add(opponent)
+                            found = True
+                            break
+                    if not found:
+                        success = False
+                        break
+                if success:
+                    self.removed_player = removed_player
+                    return
+        else:
             self.matches = []
-            sorted_players = self.generate_sorted_players(candidate_players)
+            sorted_players = self.generate_sorted_players(players_copy)
             used = set()
             success = True
             for i, (player, _) in enumerate(sorted_players):
@@ -188,9 +211,7 @@ class SubsequentRound(Round):
                     success = False
                     break
             if success:
-                if len(players_copy) % 2 != 0:
-                    removed_index = players_to_try.index(candidate_players)
-                    self.removed_player = players_copy[removed_index]
+                self.removed_player = None
                 return
         self.matches = []
         self.removed_player = None

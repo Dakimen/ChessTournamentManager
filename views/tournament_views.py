@@ -200,6 +200,7 @@ def display_all_tournaments(all_tournaments):
         print(f"Place: {tournament.place}")
         print(f"Dates: {tournament.dates}")
         print(f"Description: {tournament.description}")
+        print(f"Current round: {tournament.current_round}")
         print("Players: ")
         for player in tournament.players_list:
             print(f"{player.player.surname} {player.player.name}, "

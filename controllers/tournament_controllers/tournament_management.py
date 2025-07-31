@@ -21,7 +21,8 @@ def recreate_tournament(tournament_base_info):
         round.recreate_matches()
     for round in found_rounds:
         round.recreate_players()
-    recreated_tournament = Tournament(tourn_input, participants, found_rounds)
+    current_round = int(found_data["current_round"])
+    recreated_tournament = Tournament(tourn_input, participants, found_rounds, current_round)
     return recreated_tournament
 
 

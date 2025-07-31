@@ -12,7 +12,7 @@ class Tournament:
       tournament_beginning_date, tournament_end_date and number_of_rounds.
       2. A list of players
     """
-    def __init__(self, tournament_data, players, rounds=[]):
+    def __init__(self, tournament_data, players, rounds=[], current_round=1):
         self.name = tournament_data["tournament_name"]
         self.place = tournament_data["tournament_place"]
         self.dates = (f"{tournament_data["tournament_beginning_date"]}"
@@ -40,6 +40,7 @@ class Tournament:
             new_str_player = each_player.stringify_self()
             self.str_players.append(new_str_player)
         self.rounds = []
+        self.current_round = current_round
         self.match_history = []
         if rounds != []:
             for round in rounds:
@@ -87,9 +88,8 @@ class Tournament:
         return stringified_rounds
 
     def get_current_round(self):
-        for round in self.rounds:
-            if round.finished is False:
-                current_round = round
+        number = self.current_round - 1
+        current_round = self.rounds[number]
         return current_round
 
     def save_tournament(self):
@@ -103,6 +103,7 @@ class Tournament:
             "dates": self.dates,
             "description": self.description,
             "number_of_rounds": self.number_of_rounds,
+            "current_round": self.current_round,
             "players_list_raw": self.str_players,
             "rounds": round_dict
         })
@@ -167,10 +168,13 @@ def update_player_points_in_db(tournament=Tournament):
 
 def mark_round_finished(current_round, tournament):
     current_round.finish_round()
+    new_current_round = tournament.current_round + 1
     tournament_id = get_tournament_id_in_db(tournament)
     updated_rounds = []
     for round in tournament.rounds:
         upd_round = round.get_data()
         updated_rounds.append(upd_round)
     TOURNAMENT_DB.update({"rounds": updated_rounds},
+                         doc_ids=[tournament_id])
+    TOURNAMENT_DB.update({"current_round": new_current_round},
                          doc_ids=[tournament_id])
