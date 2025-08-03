@@ -65,7 +65,7 @@ class DataManager(ABC):
         current_round,
         str_players,
         round_dict
-        ):
+    ):
         pass
 
 
@@ -115,7 +115,7 @@ class DataManagerTinyDB(DataManager):
             updated_rounds.append(upd_round)
         self.tournament_db.update({"rounds": updated_rounds},
                                   doc_ids=[tournament_id])
-        
+
     def update_current_round(self, tournament):
         """updates tournament.current_round in tinyDB"""
         tournament_id = self.get_tournament_id_in_db(tournament)
@@ -151,7 +151,7 @@ class DataManagerTinyDB(DataManager):
         player_c_nd = f"{player_data['chess_national_id']}"
         player_fnd = self.player_db.search(db_player.chess_national_id == player_c_nd)
         return player_fnd[0]
-    
+
     def save_tournament(
         self,
         name,
@@ -162,7 +162,7 @@ class DataManagerTinyDB(DataManager):
         current_round,
         str_players,
         round_dict
-        ):
+    ):
         self.tournament_db.insert({
             "name": name,
             "place": place,

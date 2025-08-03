@@ -37,7 +37,7 @@ class PlayerView:
                        "chess_national_id": f"{new_player_national_chess_id}"
                        }
         return new_player_player_info
-    
+
     def get_data(self, id):
         print(f"Player {id['chess_national_id']} doesn't seem to be in the database. Let's fix that.")
         name = input("Please enter their name: ")
@@ -60,7 +60,7 @@ class PlayerView:
             "date_of_birth": date_of_birth,
             "chess_national_id": id["chess_national_id"]
         }
-    
+
     def handle_false_id(self):
         new_id = None
         while not self.id_format.fullmatch(new_id):
@@ -76,4 +76,3 @@ class PlayerView:
         for player in list_of_players:
             print(f"{player.surname} {player.name}, "
                   f"{player.date_of_birth}, {player.chess_national_id}")
-

@@ -76,11 +76,11 @@ class Round:
             player1_obj = Player(player1_info)
             player2_obj = Player(player2_info)
             tourn_player1 = TournamentPlayer(player1_obj,
-                                              match[0][1],
-                                              match[0][2])
+                                             match[0][1],
+                                             match[0][2])
             tourn_player2 = TournamentPlayer(player2_obj,
-                                              match[1][1],
-                                              match[1][2])
+                                             match[1][1],
+                                             match[1][2])
             new_match = (tourn_player1, tourn_player2)
             matches.append(new_match)
         self.matches = matches
@@ -90,8 +90,8 @@ class Round:
         for player in self.players:
             player_obj = Player(player["player"])
             t_player = TournamentPlayer(player_obj,
-                                         player["tournament_id"],
-                                         player["tournament_points"])
+                                        player["tournament_id"],
+                                        player["tournament_points"])
             players.append(t_player)
         self.players = players
 

@@ -5,6 +5,7 @@ from controllers.player_controller import PlayerController
 from controllers.tournament_controller import TournamentController
 from controllers.round_controller import RoundController
 
+
 class AppContext:
     def __init__(self):
         self.tournament_input = TournamentInputView()
@@ -29,6 +30,7 @@ class AppContext:
             self.player_controller,
             self.round_controller
             )
+
 
 class ApplicationController:
     def __init__(self):

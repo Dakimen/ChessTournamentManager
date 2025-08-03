@@ -5,6 +5,7 @@ from controllers.player_controller import PlayerController
 from controllers.round_controller import RoundController
 from storage_choice import data_manager
 
+
 class MenuController:
     def __init__(
             self,
@@ -20,15 +21,15 @@ class MenuController:
         self.player_controller = player_controller
         self.round_controller = round_controller
         self.main_menu_options = {
-        "1": {"text": "Player management",
-              "key": "1",
-              "action": self.display_player_menu},
-        "2": {"text": "Tournament management",
-              "key": "2",
-              "action": self.display_tournament_menu},
-        "Q": {"text": "Quit programme",
-              "key": "Q",
-              "action": None}
+            "1": {"text": "Player management",
+                  "key": "1",
+                  "action": self.display_player_menu},
+            "2": {"text": "Tournament management",
+                  "key": "2",
+                  "action": self.display_tournament_menu},
+            "Q": {"text": "Quit programme",
+                  "key": "Q",
+                  "action": None}
         }
 
         self.player_menu_options = {
@@ -116,7 +117,7 @@ class MenuController:
                 choice_text = self.unfinished_tournament_options[choice]["text"]
         else:
             return None
- 
+
     def ongoing_tournaments_list_menu(self):
         all_tournaments = data_manager.get_all_tournaments()
         ongoing_tournaments = []

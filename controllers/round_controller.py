@@ -50,7 +50,7 @@ class RoundController:
 
     def show_leaderboard(self, tournament):
         found_data = data_manager.find_tournament(tournament[0]["name"],
-                                     tournament[0]["dates"])
+                                                  tournament[0]["dates"])
         participants = get_participating_players_from_data(found_data)
         players_and_points = []
         for participant in participants:
@@ -64,7 +64,7 @@ class RoundController:
 
     def show_round_history(self, tournament):
         found_data = data_manager.find_tournament(tournament[0]["name"],
-                                     tournament[0]["dates"])
+                                                  tournament[0]["dates"])
         found_rounds = recreate_rounds(found_data["rounds"])
         for round in found_rounds:
             round.recreate_matches()

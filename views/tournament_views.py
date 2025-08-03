@@ -124,16 +124,16 @@ class TournamentInputView:
             date_beginning = input("Please insert tournament start date "
                                    "in a 'dd/mm/yyyy' format: ")
         date_end = input("Please insert tournament end date "
-                               "in a 'dd/mm/yyyy' format: ")
+                         "in a 'dd/mm/yyyy' format: ")
         while not self.date_format.fullmatch(date_end):
             print("Please use the 'dd/mm/yyyy' format, "
                   "note that days and months must be two digits. "
                   "Ex: 06/06/2025")
             date_end = input("Please insert tournament end date "
-                                   "in a 'dd/mm/yyyy' format: ")
+                             "in a 'dd/mm/yyyy' format: ")
         dates = f"{date_beginning} - {date_end}"
         return name, dates
-                    
+
     @staticmethod
     def dict_all_data(tournament_data_list):
         return {

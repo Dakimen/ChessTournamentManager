@@ -35,7 +35,6 @@ class TournamentController:
         unreg_player.save_player()
         return unreg_player
 
-
     def get_tournament_players(self, players_raw_input):
         tournament_players = []
         for player_id in players_raw_input:
@@ -48,7 +47,7 @@ class TournamentController:
                 reg_player = Player(reg_player_data)
                 tournament_players.append(reg_player)
         return tournament_players
-    
+
     def recreate_tournament(self, tournament_base_info):
         found_data = data_manager.find_tournament(tournament_base_info["name"],
                                                   tournament_base_info["dates"])

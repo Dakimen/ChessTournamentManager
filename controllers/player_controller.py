@@ -2,6 +2,7 @@ from models.player_models import Player
 from storage_choice import data_manager
 from models.player_utility import check_chess_id_validity, sort_players_alphabetically
 
+
 class PlayerController:
     def __init__(self, player_view):
         self.player_view = player_view

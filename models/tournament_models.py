@@ -31,8 +31,8 @@ class Tournament:
                 self.players_list.append(new_tournament_player)
             else:
                 new_tournament_player = TournamentPlayer(players[n][0],
-                                                          players[n][1],
-                                                          players[n][2])
+                                                         players[n][1],
+                                                         players[n][2])
                 self.players_list.append(new_tournament_player)
             n += 1
         for each_player in self.players_list:
