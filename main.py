@@ -1,10 +1,9 @@
-from controllers.menu_controllers.main_menu_controller import (
-    main_menu_controller
-    )
+from controllers.application_controller import ApplicationController
 
 
 def main():
-    main_menu_controller()
+    application_controller = ApplicationController()
+    application_controller.run()
 
 
 main()

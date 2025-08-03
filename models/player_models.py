@@ -1,6 +1,4 @@
-from storage_config import PLAYER_DB
-import re
-from tinydb import Query
+from storage_choice import data_manager
 
 
 class Player:
@@ -12,15 +10,16 @@ class Player:
 
     def save_player(self):
         """Saves player to the database"""
-        PLAYER_DB.insert({
-            "player_name": self.name,
-            "player_surname": self.surname,
-            "date_of_birth": self.date_of_birth,
-            "chess_national_id": self.chess_national_id
-        })
+        data_manager.save_player(
+            self.name,
+            self.surname,
+            self.date_of_birth,
+            self.chess_national_id
+            )
         return True
 
-    def stringify_self(self):
+    def to_dict(self):
+        """Creates a dictionary containing all the player attributes"""
         self_dict = {
             "player_name": self.name,
             "player_surname": self.surname,
@@ -30,7 +29,7 @@ class Player:
         return self_dict
 
 
-class Tournament_Player:
+class TournamentPlayer:
     def __init__(self, player: Player, tournament_id,
                  player_tournament_points=0):
         self.player = player
@@ -38,7 +37,7 @@ class Tournament_Player:
         self.tournament_id = tournament_id
 
     def __eq__(self, other):
-        if isinstance(other, Tournament_Player):
+        if isinstance(other, TournamentPlayer):
             return self.tournament_id == other.tournament_id
         else:
             return False
@@ -50,10 +49,10 @@ class Tournament_Player:
         return f"{self.player.surname}"
 
     def get_player_score_list(self):
-        player_score = [self.player.stringify_self(), self.tournament_points]
+        player_score = [self.player.to_dict(), self.tournament_points]
         return player_score
 
-    def stringify_self(self):
+    def to_dict(self):
         self_dict = {
             "player":
             {"player_name": self.player.name,
@@ -64,50 +63,3 @@ class Tournament_Player:
             "tournament_id": self.tournament_id
         }
         return self_dict
-
-
-def list_all_players():
-    list_of_all_players = PLAYER_DB.all()
-    return list_of_all_players
-
-
-def check_chess_id_validity(new_player_id, all_chess_ids):
-    pattern = r"^[A-Z]{2}\d{5}$"
-    if new_player_id in all_chess_ids:
-        return False
-    if re.match(pattern, new_player_id) is None:
-        return False
-    return True
-
-
-def sort_players_alphabetically(players_to_sort):
-    sorted_players = sorted(players_to_sort, key=lambda p: p.surname)
-    return sorted_players
-
-
-def check_if_in_db(new_player):
-    db_player = Query()
-    n_player_surname = f"{new_player["player_surname"]}"
-    n_player_cn_id = f"{new_player["chess_national_id"]}"
-    if PLAYER_DB.search(db_player.player_surname == n_player_surname) != []:
-        if PLAYER_DB.search(db_player.chess_national_id == n_player_cn_id):
-            return True
-    return False
-
-
-def get_player_from_db(player_data):
-    db_player = Query()
-    player_c_nd = f"{player_data["chess_national_id"]}"
-    player_fnd = PLAYER_DB.search(db_player.chess_national_id == player_c_nd)
-    return player_fnd[0]
-
-
-def get_participating_players_from_data(tourn_data):
-    player_tuples = []
-    for player in tourn_data["players_list_raw"]:
-        player_obj = Player(player["player"])
-        player_tournament_id = player["tournament_id"]
-        player_points = player["tournament_points"]
-        player_tuple = (player_obj, player_tournament_id, player_points)
-        player_tuples.append(player_tuple)
-    return player_tuples

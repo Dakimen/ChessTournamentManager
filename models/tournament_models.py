@@ -1,7 +1,6 @@
-from storage_config import TOURNAMENT_DB
-from tinydb import Query
-from models.player_models import Tournament_Player, Player
+from models.player_models import Player, TournamentPlayer
 from models.round_models import FirstRound, SubsequentRound
+from storage_choice import data_manager
 
 
 class Tournament:
@@ -28,16 +27,16 @@ class Tournament:
         n = 0
         while n < len(players):
             if isinstance(players[n], Player):
-                new_tournament_player = Tournament_Player(players[n], n)
+                new_tournament_player = TournamentPlayer(players[n], n)
                 self.players_list.append(new_tournament_player)
             else:
-                new_tournament_player = Tournament_Player(players[n][0],
+                new_tournament_player = TournamentPlayer(players[n][0],
                                                           players[n][1],
                                                           players[n][2])
                 self.players_list.append(new_tournament_player)
             n += 1
         for each_player in self.players_list:
-            new_str_player = each_player.stringify_self()
+            new_str_player = each_player.to_dict()
             self.str_players.append(new_str_player)
         self.rounds = []
         self.current_round = current_round
@@ -53,7 +52,7 @@ class Tournament:
                 if isinstance(round.removed_player, int):
                     if player.tournament_id == round.removed_player:
                         removed_list.append(player)
-                elif isinstance(round.removed_player, Tournament_Player):
+                elif isinstance(round.removed_player, TournamentPlayer):
                     pl_tourn_id = player.tournament_id
                     if pl_tourn_id == round.removed_player.tournament_id:
                         removed_list.append(player)
@@ -97,16 +96,16 @@ class Tournament:
         round_dict = []
         for round in self.rounds:
             round_dict.append(round.get_data())
-        TOURNAMENT_DB.insert({
-            "name": self.name,
-            "place": self.place,
-            "dates": self.dates,
-            "description": self.description,
-            "number_of_rounds": self.number_of_rounds,
-            "current_round": self.current_round,
-            "players_list_raw": self.str_players,
-            "rounds": round_dict
-        })
+        data_manager.save_tournament(
+            self.name,
+            self.place,
+            self.dates,
+            self.description,
+            self.number_of_rounds,
+            self.current_round,
+            self.str_players,
+            round_dict
+            )
 
     def get_match_history(self):
         matches = []
@@ -115,66 +114,3 @@ class Tournament:
                 match_tup = (match[0].tournament_id, match[1].tournament_id)
                 matches.append(match_tup)
         self.match_history = matches
-
-
-def get_all_tournaments():
-    all_tournaments = TOURNAMENT_DB.all()
-    return all_tournaments
-
-
-def find_tournament(name, dates):
-    tournament = Query()
-    found_tournament_by_name = TOURNAMENT_DB.search(tournament.name == name)
-    tournaments_in_place = TOURNAMENT_DB.search(tournament.dates == dates)
-    for tournament in found_tournament_by_name:
-        if tournament in tournaments_in_place:
-            return tournament
-    else:
-        return None
-
-
-def recreate_tournament_input(tourn_dict):
-    dates = tourn_dict["dates"]
-    dates = dates.split(" - ")
-    beginning_date = dates[0]
-    end_date = dates[1]
-    tourn_data = {
-        "tournament_name": tourn_dict["name"],
-        "tournament_place": tourn_dict["place"],
-        "tournament_beginning_date": beginning_date,
-        "tournament_end_date": end_date,
-        "tournament_description": tourn_dict["description"],
-        "number_of_rounds": tourn_dict["number_of_rounds"]
-    }
-    return tourn_data
-
-
-def get_tournament_id_in_db(tournament):
-    t_in_db = Query()
-    tournament_doc = TOURNAMENT_DB.search(t_in_db.name == tournament.name)[0]
-    tournament_id = tournament_doc.doc_id
-    return tournament_id
-
-
-def update_player_points_in_db(tournament=Tournament):
-    tournament_id = get_tournament_id_in_db(tournament)
-    tournament.str_players = []
-    for player in tournament.players_list:
-        str_player = player.stringify_self()
-        tournament.str_players.append(str_player)
-    TOURNAMENT_DB.update({"players_list_raw": tournament.str_players},
-                         doc_ids=[tournament_id])
-
-
-def mark_round_finished(current_round, tournament):
-    current_round.finish_round()
-    new_current_round = tournament.current_round + 1
-    tournament_id = get_tournament_id_in_db(tournament)
-    updated_rounds = []
-    for round in tournament.rounds:
-        upd_round = round.get_data()
-        updated_rounds.append(upd_round)
-    TOURNAMENT_DB.update({"rounds": updated_rounds},
-                         doc_ids=[tournament_id])
-    TOURNAMENT_DB.update({"current_round": new_current_round},
-                         doc_ids=[tournament_id])

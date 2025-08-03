@@ -5,6 +5,8 @@ class Menu:
         for key in options:
             self.options.append(options[key]["text"])
             self.option_keys.append(options[key]["key"])
+            if options[key]["key"] == "Q":
+                self.option_keys.append("q")
         self.menu_name = menu_name
 
     def display_menu(self):

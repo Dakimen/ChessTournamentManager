@@ -1,6 +1,7 @@
 from datetime import datetime
 import random
-from models.player_models import Tournament_Player, Player, get_player_from_db
+from models.player_models import Player, TournamentPlayer, data_manager
+from models.round_utility import have_played
 
 
 class Round:
@@ -50,7 +51,7 @@ class Round:
             matches_for_dict.append(match_str_tuple)
         string_players = []
         for player in self.players:
-            string_player = player.stringify_self()
+            string_player = player.to_dict()
             string_players.append(string_player)
         if isinstance(self.removed_player, int):
             self.recreate_removed_player()
@@ -70,14 +71,14 @@ class Round:
     def recreate_matches(self):
         matches = []
         for match in self.matches:
-            player1_info = get_player_from_db(match[0][0])
-            player2_info = get_player_from_db(match[1][0])
+            player1_info = data_manager.get_player_from_db(match[0][0])
+            player2_info = data_manager.get_player_from_db(match[1][0])
             player1_obj = Player(player1_info)
             player2_obj = Player(player2_info)
-            tourn_player1 = Tournament_Player(player1_obj,
+            tourn_player1 = TournamentPlayer(player1_obj,
                                               match[0][1],
                                               match[0][2])
-            tourn_player2 = Tournament_Player(player2_obj,
+            tourn_player2 = TournamentPlayer(player2_obj,
                                               match[1][1],
                                               match[1][2])
             new_match = (tourn_player1, tourn_player2)
@@ -88,7 +89,7 @@ class Round:
         players = []
         for player in self.players:
             player_obj = Player(player["player"])
-            t_player = Tournament_Player(player_obj,
+            t_player = TournamentPlayer(player_obj,
                                          player["tournament_id"],
                                          player["tournament_points"])
             players.append(t_player)
@@ -241,28 +242,3 @@ def recreate_rounds(rounds_list):
         else:
             raise "Wrong round type"
     return rounds
-
-
-def update_points(result, match, tournament):
-    for tournament_player in tournament.players_list:
-        tp_player_id = tournament_player.player.chess_national_id
-        m0_player_id = match[0].player.chess_national_id
-        m1_player_id = match[1].player.chess_national_id
-        if tp_player_id == m0_player_id:
-            player1 = tournament_player
-        if tp_player_id == m1_player_id:
-            player2 = tournament_player
-    if result == "draw":
-        player1.tournament_points += 0.5
-        player2.tournament_points += 0.5
-    else:
-        if result == player1.player.chess_national_id:
-            player1.tournament_points += 1
-        elif result == player2.player.chess_national_id:
-            player2.tournament_points += 1
-
-
-def have_played(p1, p2, match_history):
-    pair = (p1.tournament_id, p2.tournament_id)
-    reverse_pair = (p2.tournament_id, p1.tournament_id)
-    return pair in match_history or reverse_pair in match_history
