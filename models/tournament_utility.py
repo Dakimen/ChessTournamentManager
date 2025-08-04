@@ -1,6 +1,17 @@
 
 
 def recreate_tournament_input(tourn_dict):
+    """
+    Creates a dictionary with basic tournament information to allow for easier tournament instantiation.
+
+    Arguments:
+        A dictionary containing:
+            'name' (string)
+            'place' (string)
+            'dates' (string in 'dd/mm/yyy - dd/mm/yyyy' format)
+            'description' (string)
+            'number_of_rounds' (string)
+    """
     dates = tourn_dict["dates"]
     dates = dates.split(" - ")
     beginning_date = dates[0]

@@ -3,6 +3,12 @@ from models.player_models import Player
 
 
 def check_chess_id_validity(new_player_id, all_chess_ids):
+    """
+        Checks that a list of provided ids confirms to ID00000 format
+
+        Arguments:
+            List of id strings.
+    """
     pattern = r"^[A-Z]{2}\d{5}$"
     if new_player_id in all_chess_ids:
         return False
@@ -12,11 +18,33 @@ def check_chess_id_validity(new_player_id, all_chess_ids):
 
 
 def sort_players_alphabetically(players_to_sort):
+    """
+        Sorts a list of provided players alphabetically.
+
+        Arguments:
+            A list of Player objects
+    """
     sorted_players = sorted(players_to_sort, key=lambda p: p.surname)
     return sorted_players
 
 
 def get_participating_players_from_data(tourn_data):
+    """
+        Forms Player objects based on raw data recuperated from the database.
+
+        Returns tuples of (Player, player's unique tournament id, player's points)
+
+        Argument:
+            Raw tournament data from the database containing:
+                'players_list_raw' that contains:
+                    'player': raw player data in form of a dictionary containing at least:
+                        'player_surname': string
+                        'player_name': string
+                        'date_of_birth': string
+                        'chess_national_id': string
+                    'tournament_id': int
+                    'tournament_points': string
+    """
     player_tuples = []
     for player in tourn_data["players_list_raw"]:
         player_obj = Player(player["player"])

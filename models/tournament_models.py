@@ -5,11 +5,60 @@ from storage_choice import data_manager
 
 class Tournament:
     """
-    Tournament class, requires:
-      1. tournament_data dictionary that includes:
-      keys-values of tournament_name, tournament_place,
-      tournament_beginning_date, tournament_end_date and number_of_rounds.
-      2. A list of players
+    Represents a chess tournament, including metadata, player information,
+    and a sequence of rounds.
+
+    Initializes a tournament using provided tournament data and players, and
+    handles the generation of rounds, match history tracking, and serialization.
+
+    Args:
+        tournament_data (dict): Dictionary containing tournament metadata.
+        players (list): List of Player objects (for fresh tournaments) or tuples
+            of serialized TournamentPlayer data (for restored tournaments).
+        rounds (list, optional): Previously played rounds (for tournament recreation).
+        current_round (int, optional): Current round number (1-based index).
+
+    Attributes:
+        name (str): The name of the tournament.
+        place (str): The location where the tournament takes place.
+        dates (str): The formatted date range of the tournament.
+        description (str): A brief description of the tournament.
+        number_of_rounds (int): Total number of rounds to be played.
+        str_players (list): List of players represented as dictionaries.
+        players_list (list): List of TournamentPlayer instances.
+        rounds (list): List of Round instances (FirstRound or SubsequentRound).
+        current_round (int): Current round number (1-based index).
+        match_history (list): List of tuples representing past matchups.
+
+    Methods:
+        get_removed_list():
+        Builds a list of players removed from previous rounds due to odd numbers.
+        Returns:
+            list: A list of TournamentPlayer instances that were removed from rounds.
+
+        generate_round():
+        Generates and appends the next round in the tournament, if the total number of rounds
+        has not yet been reached.
+        Creates a FirstRound if no rounds exist yet; otherwise creates a SubsequentRound using
+        Swiss pairing logic, avoiding repeat matches and handling odd player counts.
+
+        stringify_rounds():
+        Converts all matches in each round into string format (for display or export).
+        Returns:
+            list: A list of stringified match lists for each round.
+
+        get_current_round():
+        Retrieves the current round object based on the current round number.
+        Returns:
+            Round: The current Round instance.
+
+        save_tournament():
+        Serializes and saves the tournament data to persistent storage via `data_manager`.
+        The data saved includes metadata, players, and all rounds as dictionaries.
+
+        get_match_history():
+        Builds the match history by extracting player ID pairs from all previous rounds.
+        This history is used to prevent repeated matchups in future rounds
     """
     def __init__(self, tournament_data, players, rounds=[], current_round=1):
         self.name = tournament_data["tournament_name"]
@@ -46,6 +95,12 @@ class Tournament:
                 self.rounds.append(round)
 
     def get_removed_list(self):
+        """
+        Builds a list of players removed from previous rounds due to odd numbers.
+
+        Returns:
+            list: A list of TournamentPlayer instances that were removed from rounds.
+        """
         removed_list = []
         for round in self.rounds:
             for player in self.players_list:
@@ -62,6 +117,13 @@ class Tournament:
         return removed_list
 
     def generate_round(self):
+        """
+        Generates and appends the next round in the tournament, if the total number of rounds
+        has not yet been reached.
+
+        Creates a FirstRound if no rounds exist yet; otherwise creates a SubsequentRound using
+        Swiss pairing logic, avoiding repeat matches and handling odd player counts.
+        """
         if len(self.rounds) < self.number_of_rounds:
             if len(self.rounds) == 0:
                 new_round = FirstRound(self.players_list)
@@ -80,6 +142,12 @@ class Tournament:
             return None
 
     def stringify_rounds(self):
+        """
+        Converts all matches in each round into string format (for display or export).
+
+        Returns:
+            list: A list of stringified match lists for each round.
+        """
         stringified_rounds = []
         for round in self.rounds:
             round_strings = round.stringify_matches()
@@ -87,12 +155,22 @@ class Tournament:
         return stringified_rounds
 
     def get_current_round(self):
+        """
+        Retrieves the current round object based on the current round number.
+
+        Returns:
+            Round: The current Round instance.
+        """
         number = self.current_round - 1
         current_round = self.rounds[number]
         return current_round
 
     def save_tournament(self):
-        """Saves the tournament to the database"""
+        """
+        Serializes and saves the tournament data to persistent storage via `data_manager`.
+
+        The data saved includes metadata, players, and all rounds as dictionaries.
+        """
         round_dict = []
         for round in self.rounds:
             round_dict.append(round.get_data())
@@ -108,6 +186,11 @@ class Tournament:
             )
 
     def get_match_history(self):
+        """
+        Builds the match history by extracting player ID pairs from all previous rounds.
+
+        This history is used to prevent repeated matchups in future rounds.
+        """
         matches = []
         for round in self.rounds:
             for match in round.matches:

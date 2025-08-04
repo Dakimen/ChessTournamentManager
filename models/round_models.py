@@ -5,12 +5,56 @@ from models.round_utility import have_played
 
 
 class Round:
+    """
+    Represents a single round in a tournament, including its players, matches, and metadata.
+
+    This class provides methods for generating and restoring matches, recording round data,
+    and serializing it for storage.
+
+    Attributes:
+        name (str): Name of the round.
+        number (int): Round number.
+        start_date (str): Start date of the round.
+        end_date (str): End date of the round (recorded when the round finishes).
+        players (list): List of TournamentPlayer instances participating in the round.
+        matches (list): List of match tuples, each containing two TournamentPlayer instances.
+        finished (bool): Whether the round is finished.
+        type (str): Type of the round (e.g., "First", "Subsequent").
+        removed_player (TournamentPlayer or int): Player removed due to odd number of participants.
+
+    Methods:
+        generate_matches():
+            Abstract method to generate matches for the round.
+            Must be implemented by subclasses.
+
+        finish_round():
+            Marks the round as finished and records the current timestamp as the end date.
+
+        stringify_matches():
+            Converts the list of matches into readable string representations for display.
+
+        get_data():
+            Serializes the round into a dictionary, including players, matches,
+            timestamps, and metadata for storage or reconstruction.
+
+        recreate_matches():
+            Reconstructs the match objects using stored match data and players from the database.
+
+        recreate_players():
+            Recreates the TournamentPlayer objects from serialized player dictionaries.
+
+        recreate_removed_player():
+            Resolves the removed_player ID by matching it to the correct TournamentPlayer
+            instance in the players list.
+    """
     def generate_matches(self):
+        """Generates matches"""
         raise NotImplementedError(
             "This function must be implemented in the subclasses"
             )
 
     def finish_round(self):
+        """Marks round finished and records the time of this operation."""
         self.finished = True
         self.end_date = datetime.now().strftime("%H:%M on %d/%m/%Y")
 
@@ -30,6 +74,7 @@ class Round:
         return matches_stringified
 
     def get_data(self):
+        """Creates a dictionary containing all the data contained in the Round class."""
         matches_for_dict = []
         for match in self.matches:
             dict_player1 = [{
@@ -69,6 +114,8 @@ class Round:
         return round_dict
 
     def recreate_matches(self):
+        """Recreates TournamentPlayer objects within matches from matches attribute of this class instance.
+           Takes no arguments."""
         matches = []
         for match in self.matches:
             player1_info = data_manager.get_player_from_db(match[0][0])
@@ -86,6 +133,8 @@ class Round:
         self.matches = matches
 
     def recreate_players(self):
+        """Recreates TournamentPlayer objects in self.players.
+           Takes no argument"""
         players = []
         for player in self.players:
             player_obj = Player(player["player"])
@@ -96,12 +145,39 @@ class Round:
         self.players = players
 
     def recreate_removed_player(self):
+        """Gets removed player in cases of an odd number of players.
+           Matches id in self.players to self.removed_player
+           Takes no argument"""
         for player in self.players:
             if player.tournament_id == self.removed_player:
                 self.removed_player = player
 
 
 class FirstRound(Round):
+    """
+    Represents the first round of a tournament.
+
+    Inherits from the Round base class and implements match generation logic specific to
+    the first round (randomized pairing). Handles odd numbers of players by removing
+    a designated player (with tournament_id == 0).
+
+    Attributes:
+        name (str): Name of the round ("Round 1").
+        players (list): List of TournamentPlayer instances participating in the round.
+        number (int): Round number (always 1 for the first round).
+        finished (bool): Whether the round has been marked as finished.
+        start_date (str): Timestamp when the round started.
+        end_date (str or int): Timestamp when the round ended or 0 if not finished.
+        matches (list): List of randomly generated match tuples.
+        type (str): Type of round ("First Round").
+        removed_player (TournamentPlayer or None):
+        The player removed from the round if the number of participants is odd.
+
+    Methods:
+        generate_matches():
+            Generates matches by randomly pairing players.
+            If the number of players is odd, removes the player with tournament_id == 0.
+    """
     def __init__(self, players, matches=[], finished=False, start=None,
                  end=0, removed_player=None):
         self.name = "Round 1"
@@ -119,6 +195,8 @@ class FirstRound(Round):
         self.removed_player = removed_player
 
     def generate_matches(self):
+        """Generates matches by randomly pairing players.
+           If the number of players is odd, removes the player with tournament_id == 0."""
         players_copy = self.players[:]
         if len(players_copy) % 2 != 0:
             for player in players_copy:
@@ -131,6 +209,35 @@ class FirstRound(Round):
 
 
 class SubsequentRound(Round):
+    """
+    Represents a tournament round occurring after the first one.
+
+    This class implements match generation using a Swiss-style pairing system, where players
+    are sorted by score and matched against opponents they haven't faced yet. In case of
+    an odd number of participants, one player is removed from the round.
+
+    Attributes:
+        name (str): Name of the round (e.g., "Round 2").
+        players (list): List of TournamentPlayer instances in the round.
+        number (int): Round number.
+        finished (bool): Indicates whether the round has concluded.
+        start_date (str): Timestamp when the round started.
+        end_date (str or int): Timestamp when the round ended or 0 if unfinished.
+        matches (list): List of tuples of matched TournamentPlayer instances.
+        type (str): Type of round ("Subsequent Round").
+        removed_player (TournamentPlayer or None): Player removed in case of odd number of participants.
+
+    Methods:
+        generate_sorted_players(players_copy):
+            Takes a list of TournamentPlayer instances and returns a list of tuples
+            (player, score), sorted by descending score.
+
+        generate_matches(match_history, removed_list):
+            Generates matches for the round using Swiss-style pairing:
+            - Sorts players by score
+            - Ensures no repeated matchups from previous rounds
+            - Handles odd-numbered player lists by removing an available player not in `removed_list`
+    """
     def __init__(self, name, players, number, matches=[], finished=False,
                  start=None, end=0, removed_player=None):
         self.name = name
@@ -148,6 +255,8 @@ class SubsequentRound(Round):
         self.removed_player = removed_player
 
     def generate_sorted_players(self, players_copy):
+        """Takes a list of TournamentPlayer instances and returns a list of tuples
+           (player, score), sorted by descending score."""
         players_with_points = []
         self.matches = []
         for player in players_copy:
@@ -158,6 +267,10 @@ class SubsequentRound(Round):
         return sorted_players
 
     def generate_matches(self, match_history, removed_list):
+        """Generates matches for the round using Swiss-style pairing:
+            - Sorts players by score
+            - Ensures no repeated matchups from previous rounds
+            - Handles odd-numbered player lists by removing an available player not in 'removed_list'"""
         players_copy = self.players[:]
         if len(players_copy) % 2 != 0:
             candidates = [
@@ -219,6 +332,18 @@ class SubsequentRound(Round):
 
 
 def recreate_rounds(rounds_list):
+    """Recreates rounds of both FirstRound and Subsequent Round types.
+       Arguments:
+           List of round dictionaries, containing:
+               'name' (str): Name of the round (e.g., 'Round 2').
+               'players' (list): List of TournamentPlayer instances in the round.
+               'number' (int): Round number.
+               'finished' (bool): Indicates whether the round has concluded.
+               'start_date' (str): Timestamp when the round started.
+               'end_date' (str or int): Timestamp when the round ended or 0 if unfinished.
+               'matches' (list): List of tuples of matched TournamentPlayer instances.
+               'type' (str): Type of round ('First Round' or 'Subsequent Round').
+               removed_player (TournamentPlayer or None): Player removed in case of odd number of participants."""
     rounds = []
     for round in rounds_list:
         if round["type"] == "First Round":

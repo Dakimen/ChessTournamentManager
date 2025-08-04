@@ -9,6 +9,42 @@ from storage_choice import data_manager
 
 
 class TournamentController:
+    """
+    Controller class responsible for round management of the application.
+
+    Attributes:
+        tour_display (TournamentDisplayView): Handles display of tournament information.
+        tour_input (TournamentInputView): Handles input related to tournaments.
+        player_view (PlayerView): Handles player input and output.
+
+    Methods:
+        manage_create_tournament():
+            Collects input from the user to create a new tournament, including player selection,
+            generates the first round, and saves the tournament to the database.
+
+        handle_not_in_db(new_player_id):
+            Collects data for a player not found in the database, creates a new Player object,
+            saves it, and returns the player instance.
+
+        get_tournament_players(players_raw_input):
+            Converts a list of player IDs into Player objects, registering any players not already
+            in the database. Returns a list of Player instances.
+
+        recreate_tournament(tournament_base_info):
+            Reconstructs a tournament and its rounds from stored data using the name and dates.
+            Returns a Tournament instance or None if not found.
+
+        list_all_tournaments():
+            Retrieves and displays all stored tournaments by recreating them from the database.
+
+        find_a_tournament():
+            Allows the user to search for a tournament by name and date, recreates it from storage,
+            and displays it if found.
+
+        calculate_number_of_players(nb_rounds):
+            Calculates the expected number of players based on the number of rounds.
+            Defaults to 5 players for 4 rounds if no input is given.
+    """
     def __init__(
             self,
             tourn_display=TournamentDisplayView,
@@ -20,6 +56,8 @@ class TournamentController:
         self.player_view = player_view
 
     def manage_create_tournament(self):
+        """Collects input from the user to create a new tournament, including player selection,
+        generates the first round, and saves the tournament to the database."""
         tournament_data = self.tour_input.tournament_data_input()
         n_of_rounds = tournament_data["number_of_rounds"]
         nb_players = self.calculate_number_of_players(n_of_rounds)
@@ -30,12 +68,26 @@ class TournamentController:
         new_tournament.save_tournament()
 
     def handle_not_in_db(self, new_player_id):
+        """
+           Collects data for a player not found in the database, creates a new Player object,
+           saves it, and returns the player instance.
+
+           Arguments:
+               A single player's national chess id.
+        """
         new_player = self.player_view.get_data(new_player_id)
         unreg_player = Player(new_player)
         unreg_player.save_player()
         return unreg_player
 
     def get_tournament_players(self, players_raw_input):
+        """
+           Converts a list of player IDs into Player objects, registering any players not already
+           in the database. Returns a list of Player instances.
+
+           Arguments:
+               a raw list of player national chess id strings.
+        """
         tournament_players = []
         for player_id in players_raw_input:
             new_player = {"chess_national_id": player_id}
@@ -49,6 +101,13 @@ class TournamentController:
         return tournament_players
 
     def recreate_tournament(self, tournament_base_info):
+        """
+           Reconstructs a tournament and its rounds from stored data using the name and dates.
+           Returns a Tournament instance or None if not found.
+
+           Arguments:
+               A tournament dictionary with 'name' and 'dates' values.
+        """
         found_data = data_manager.find_tournament(tournament_base_info["name"],
                                                   tournament_base_info["dates"])
         if found_data is None:
@@ -66,6 +125,7 @@ class TournamentController:
         return recreated_tournament
 
     def list_all_tournaments(self):
+        """Retrieves and displays all stored tournaments by recreating them from the database."""
         tournaments = data_manager.get_all_tournaments()
         recreated_tournaments = []
         for tournament in tournaments:
@@ -76,6 +136,8 @@ class TournamentController:
         self.tour_display.display_all_tournaments(recreated_tournaments)
 
     def find_a_tournament(self):
+        """Allows the user to search for a tournament by name and date, recreates it from storage,
+           and displays it if found."""
         name_and_dates = self.tour_input.find_tournament_input()
         tournament_data = {"name": name_and_dates[0], "dates": name_and_dates[1]}
         recreated_tournament = self.recreate_tournament(tournament_data)
@@ -87,6 +149,12 @@ class TournamentController:
 
     @staticmethod
     def calculate_number_of_players(nb_rounds):
+        """Calculates the expected number of players based on the number of rounds.
+           Defaults to 5 players for 4 rounds if no input is given.
+
+           Arguments:
+               Number of rounds in a form of a string.
+        """
         if nb_rounds == "":
             nb_rounds = 4
         else:

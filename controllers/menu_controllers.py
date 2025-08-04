@@ -7,6 +7,28 @@ from storage_choice import data_manager
 
 
 class MenuController:
+    """
+    Controller class responsible for managing the menu navigation logic of the application.
+
+    This class provides interfaces for displaying and handling interactions with the main menu,
+    player management menu, tournament management menu, and unfinished tournament menus. It
+    connects user input with appropriate actions from other controllers such as
+    PlayerController, TournamentController, and RoundController.
+
+    Attributes:
+        tournament_input (TournamentInputView): View class for receiving tournament input.
+        tournament_display (TournamentDisplayView): View class for displaying tournament information.
+        tournament_controller (TournamentController): Controller managing tournament-related logic.
+        player_controller (PlayerController): Controller managing player-related logic.
+        round_controller (RoundController): Controller managing round and leaderboard logic.
+
+    Methods:
+        display_main_menu(): Displays the main menu and handles user input.
+        display_player_menu(): Displays the player menu and handles user actions.
+        display_tournament_menu(): Displays the tournament menu and manages actions.
+        ongoing_tournament_menu(chosen_tournament): Displays options for an ongoing tournament.
+        ongoing_tournaments_list_menu(): Lists ongoing tournaments and routes user to the selected one.
+    """
     def __init__(
             self,
             tournament_input=TournamentInputView,
@@ -71,6 +93,7 @@ class MenuController:
         }
 
     def display_main_menu(self):
+        """Displays the main menu and handles user input."""
         main_menu = Menu("Main menu", self.main_menu_options)
         decision_main_menu = main_menu.display_menu()
         action = self.main_menu_options[decision_main_menu]["action"]
@@ -84,6 +107,7 @@ class MenuController:
         return None
 
     def display_player_menu(self):
+        """Displays the player menu and handles user actions."""
         player_menu = Menu("Player management", self.player_menu_options)
         decision = player_menu.display_menu()
         while self.player_menu_options[decision]["text"] != "Back to Main Menu":
@@ -94,6 +118,7 @@ class MenuController:
         return None
 
     def display_tournament_menu(self):
+        """Displays the tournament menu and manages actions."""
         tournament_menu = Menu("Tournament menu", self.tournament_menu_options)
         decision = tournament_menu.display_menu()
         decision_text = self.tournament_menu_options[decision]["text"]
@@ -106,6 +131,7 @@ class MenuController:
             return None
 
     def ongoing_tournament_menu(self, chosen_tournament):
+        """Displays options for an ongoing tournament. Takes chosen tournament dict in argument."""
         tourn_management_menu = Menu(f"{chosen_tournament[0]["name"]} menu",
                                      self.unfinished_tournament_options)
         choice = tourn_management_menu.display_menu()
@@ -119,6 +145,7 @@ class MenuController:
             return None
 
     def ongoing_tournaments_list_menu(self):
+        """Lists ongoing tournaments and routes user to the selected one."""
         all_tournaments = data_manager.get_all_tournaments()
         ongoing_tournaments = []
         for tournament in all_tournaments:

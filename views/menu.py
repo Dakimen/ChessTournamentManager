@@ -1,4 +1,14 @@
 class Menu:
+    """
+    A Menu class representing a menu within the application.
+    Allows for easier creation and display of various menus.
+
+    Arguments:
+        menu name (string)
+        option to display (dict), containing:
+            'text' (string to display as the name of the option)
+            'key' (string acting as expected value within a console menu)
+    """
     def __init__(self, menu_name, options):
         self.options = []
         self.option_keys = []

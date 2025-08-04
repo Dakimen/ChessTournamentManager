@@ -7,6 +7,21 @@ from controllers.round_controller import RoundController
 
 
 class AppContext:
+    """
+    Initializes and holds references to all major components of the application.
+
+    This class sets up the views, controllers, and injects dependencies needed by
+    the MenuController to run the application in a decoupled and modular way.
+
+    Attributes:
+        tournament_input (TournamentInputView): Handles input related to tournaments.
+        tournament_display (TournamentDisplayView): Handles display of tournament information.
+        player_view (PlayerView): Handles player input and output.
+        player_controller (PlayerController): Logic handler for player operations.
+        tournament_controller (TournamentController): Logic handler for tournament operations.
+        round_controller (RoundController): Manages current round, leaderboard, and history.
+        menu_controller (MenuController): Manages user interaction with menus.
+    """
     def __init__(self):
         self.tournament_input = TournamentInputView()
         self.tournament_display = TournamentDisplayView()
@@ -33,9 +48,23 @@ class AppContext:
 
 
 class ApplicationController:
+    """
+    Entry point for the application.
+
+    This class is responsible for initializing the application context and
+    launching the main menu interface.
+
+    Attributes:
+        context (AppContext): Application context holding all controllers and views.
+
+    Methods:
+        run(): Starts the main menu loop of the application.
+    """
     def __init__(self):
         self.context = AppContext()
 
     def run(self):
+        """Starts the main menu loop of the application.
+           Takes no arguments."""
         self.context.menu_controller.display_main_menu()
         return None

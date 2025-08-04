@@ -2,6 +2,36 @@ import re
 
 
 class PlayerView:
+    """
+    View class responsible for handling player-related user interactions.
+
+    This class manages the input and validation of player data through the console.
+    It uses regular expressions to ensure that user input follows specific formats
+    (e.g. names, dates, IDs) and provides feedback when corrections are needed.
+
+    Attributes:
+        names_format (Pattern): Validates names (capitalized, optional hyphens/apostrophes).
+        numbers_format (Pattern): Validates 2-digit numerical strings.
+        date_format (Pattern): Validates dates in 'dd/mm/yyyy' format.
+        id_format (Pattern): Validates chess IDs in 'AB00000' format.
+        year_format (Pattern): Validates 4-digit year strings.
+
+    Methods:
+        player_addition_view():
+            Prompts user to input new player details with format validation.
+            Returns a dictionary representing the new player.
+
+        get_data(id):
+            Handles missing player data by prompting the user to input it.
+            Returns a dictionary with complete player information.
+
+        handle_false_id():
+            Prompts the user to input a valid chess ID when the given one is invalid or taken.
+            Returns a corrected ID string.
+
+        display_list_of_players(list_of_players):
+            Displays the list of players in a human-readable format.
+    """
     def __init__(self):
         self.names_format = re.compile(r"^[A-Z][a-z]*(?:[-'][A-Z][a-z]*)*")
         self.numbers_format = re.compile(r"^[0-9]{2}$")
@@ -10,6 +40,10 @@ class PlayerView:
         self.year_format = re.compile(r"^[0-9]{4}$")
 
     def player_addition_view(self):
+        """
+        Prompts user to input new player details with format validation.
+        Returns a dictionary representing the new player.
+        """
         new_player_name = input("Insert new player's name: ")
         while not self.names_format.fullmatch(new_player_name):
             print("Please avoid using any characters other than letters, commas and apostrophes")
@@ -39,6 +73,10 @@ class PlayerView:
         return new_player_player_info
 
     def get_data(self, id):
+        """
+        Handles missing player data by prompting the user to input it.
+        Returns a dictionary with complete player information.
+        """
         print(f"Player {id['chess_national_id']} doesn't seem to be in the database. Let's fix that.")
         name = input("Please enter their name: ")
         while not self.names_format.fullmatch(name):
@@ -62,6 +100,10 @@ class PlayerView:
         }
 
     def handle_false_id(self):
+        """
+        Prompts the user to input a valid chess ID when the given one is invalid or taken.
+        Returns a corrected ID string.
+        """
         new_id = None
         while not self.id_format.fullmatch(new_id):
             print("ID you entered appears to be taken or incorrect.")
@@ -73,6 +115,7 @@ class PlayerView:
 
     @staticmethod
     def display_list_of_players(list_of_players):
+        """Displays the list of players in a human-readable format."""
         for player in list_of_players:
             print(f"{player.surname} {player.name}, "
                   f"{player.date_of_birth}, {player.chess_national_id}")
