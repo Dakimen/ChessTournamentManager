@@ -404,7 +404,8 @@ class TournamentDisplayView:
                       f"{player.player.chess_national_id}")
             print("\nRounds: ")
             self.display_round_history(tournament.rounds)
-            print("")
+            print("\nLeaderboard: ")
+            self.display_leaderboard(tournament.leaderboard)
 
     @staticmethod
     def display_round_history(rounds):
@@ -415,6 +416,7 @@ class TournamentDisplayView:
         List of FirstRound and SubsequentRound objects containing TournamentPlayer objects.
         """
         for round in rounds:
+            print("")
             print(round.name)
             for match in round.matches:
                 print(f"{match[0].player.surname} {match[0].player.name}, "
@@ -431,6 +433,11 @@ class TournamentDisplayView:
         print("\nTournament not found!\n")
 
     @staticmethod
+    def all_rounds_played():
+        """Prints out that all rounds of a tournament have been played"""
+        print("\nAll rounds of this tournament have been played.\n")
+
+    @staticmethod
     def display_leaderboard(players_and_points):
         """
         Prints out a list of players sorted by the number of points in form of a leaderboard.
@@ -438,10 +445,12 @@ class TournamentDisplayView:
         Args:
         Sorted list of tuples containing (Player, number of points (int))
         """
+        print("")
         for player in players_and_points:
             print(f"pts: {player[1]}. "
                   f"{player[0].surname} {player[0].name}, "
                   f"{player[0].chess_national_id}")
+        print("")
 
     @staticmethod
     def show_current_round_info(matches):

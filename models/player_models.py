@@ -1,4 +1,4 @@
-from storage_choice import data_manager
+from data_manager.storage_choice import data_manager
 
 
 class Player:

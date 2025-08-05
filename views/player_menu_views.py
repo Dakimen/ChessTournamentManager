@@ -54,10 +54,10 @@ class PlayerView:
             print("Please avoid using any characters other than letters, commas and apostrophes")
             print("Also please make sure that the first letter is capitalized")
             new_player_surname = input("Insert new player's surname: ")
-        new_player_date_of_birth = input("Insert new player's date of birth in a dd/mm/yyyy format: ")
-        while not self.date_format.fullmatch(new_player_date_of_birth):
-            print("Please use the dd/mm/yyyy format.")
-            new_player_date_of_birth = input("Insert new player's date of birth in a dd/mm/yyyy format: ")
+        new_player_date_of_birth = input("Insert new player's date of birth in a yyyy format: ")
+        while not self.year_format.fullmatch(new_player_date_of_birth):
+            print("Please use the yyyy format.")
+            new_player_date_of_birth = input("Insert new player's date of birth in a yyyy format: ")
         new_player_national_chess_id = input("Insert new player's "
                                              "national chess ID using ID00000 format: ")
         while not self.id_format.fullmatch(new_player_national_chess_id):

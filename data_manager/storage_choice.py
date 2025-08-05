@@ -1,4 +1,4 @@
-from storage_config import DataManagerTinyDB
+from data_manager.storage_config import DataManagerTinyDB
 
 
 def get_data_manager(db_type="tinydb"):

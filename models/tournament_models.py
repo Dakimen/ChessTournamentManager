@@ -1,6 +1,6 @@
 from models.player_models import Player, TournamentPlayer
 from models.round_models import FirstRound, SubsequentRound
-from storage_choice import data_manager
+from data_manager.storage_choice import data_manager
 
 
 class Tournament:
@@ -89,6 +89,7 @@ class Tournament:
             self.str_players.append(new_str_player)
         self.rounds = []
         self.current_round = current_round
+        self.leaderboard = None
         self.match_history = []
         if rounds != []:
             for round in rounds:

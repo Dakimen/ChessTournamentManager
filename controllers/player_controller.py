@@ -1,5 +1,5 @@
 from models.player_models import Player
-from storage_choice import data_manager
+from data_manager.storage_choice import data_manager
 from models.player_utility import check_chess_id_validity, sort_players_alphabetically
 
 

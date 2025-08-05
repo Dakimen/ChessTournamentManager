@@ -82,8 +82,11 @@ ChessTournamentManager/
 ├── controllers/       # Business logic and flow control
 ├── models/            # Data models and storage logic
 ├── views/             # Terminal-based UI
+├── data_manager/      # Database interaction logic
+├── flake8-rapport/    # Contains the flake8-html report
 ├── main.py            # Entry point of the program
 ├── requirements.txt   # List of dependencies
+├── .flake8            # Additional flake8 configuration
 └── README.md
 ```
 

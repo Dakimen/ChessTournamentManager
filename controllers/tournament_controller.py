@@ -5,7 +5,7 @@ from views.player_menu_views import PlayerView
 from models.tournament_utility import recreate_tournament_input
 from models.round_models import recreate_rounds
 from models.player_utility import get_participating_players_from_data
-from storage_choice import data_manager
+from data_manager.storage_choice import data_manager
 
 
 class TournamentController:
@@ -132,6 +132,15 @@ class TournamentController:
             recreated_tournament = self.recreate_tournament(tournament)
             if recreated_tournament is None:
                 return None
+            players_and_points = []
+            for participant in recreated_tournament.players_list:
+                player_and_points = tuple()
+                player_and_points = (participant.player, participant.tournament_points)
+                players_and_points.append(player_and_points)
+            players_and_points_sorted = sorted(players_and_points,
+                                               key=lambda player: player[1],
+                                               reverse=True)
+            recreated_tournament.leaderboard = players_and_points_sorted
             recreated_tournaments.append(recreated_tournament)
         self.tour_display.display_all_tournaments(recreated_tournaments)
 
@@ -144,6 +153,15 @@ class TournamentController:
         if recreated_tournament is None:
             return None
         tournaments = []
+        players_and_points = []
+        for participant in recreated_tournament.players_list:
+            player_and_points = tuple()
+            player_and_points = (participant.player, participant.tournament_points)
+            players_and_points.append(player_and_points)
+        players_and_points_sorted = sorted(players_and_points,
+                                           key=lambda player: player[1],
+                                           reverse=True)
+        recreated_tournament.leaderboard = players_and_points_sorted
         tournaments.append(recreated_tournament)
         self.tour_display.display_all_tournaments(tournaments)
 

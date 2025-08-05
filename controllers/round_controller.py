@@ -1,7 +1,7 @@
 from views.tournament_views import TournamentDisplayView, TournamentInputView
 from controllers.tournament_controller import TournamentController
 from views.player_menu_views import PlayerView
-from storage_choice import data_manager
+from data_manager.storage_choice import data_manager
 from models.round_utility import update_points
 from models.player_utility import get_participating_players_from_data, sort_players_alphabetically
 from models.round_models import recreate_rounds
@@ -68,6 +68,9 @@ class RoundController:
 
         recreated_tournament = self.tournament_controller.recreate_tournament(tournament_base_info[0])
         current_round = recreated_tournament.get_current_round()
+        if current_round.finished is True:
+            self.display_view.all_rounds_played()
+            return
         self.display_view.show_current_round_info(current_round.matches)
         result_list = self.input_view.get_round_results(current_round.matches)
         if result_list is None:
@@ -82,6 +85,7 @@ class RoundController:
         data_manager.update_player_points_in_db(recreated_tournament)
         recreated_tournament.generate_round()
         data_manager.mark_round_finished(current_round, recreated_tournament)
+        data_manager.update_current_round(recreated_tournament)
 
     def show_players_alphabetic(self, tournament):
         """Recovers participant data and displays an alphabetically-sorted list of players."""

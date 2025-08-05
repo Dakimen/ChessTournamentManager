@@ -3,7 +3,7 @@ from views.tournament_views import TournamentDisplayView, TournamentInputView
 from controllers.tournament_controller import TournamentController
 from controllers.player_controller import PlayerController
 from controllers.round_controller import RoundController
-from storage_choice import data_manager
+from data_manager.storage_choice import data_manager
 
 
 class MenuController:
@@ -61,7 +61,7 @@ class MenuController:
             "2": {"text": "Show full list of existing players",
                   "key": "2",
                   "action": self.player_controller.get_all_players_alphabetically},
-            "Q": {"text": "Back to Main Menu",
+            "3": {"text": "Back to Main Menu",
                   "key": "3",
                   "action": None}
         }

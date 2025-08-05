@@ -374,9 +374,9 @@ class DataManagerTinyDB(DataManager):
         tournament (Tournament object)
         """
         tournament_id = self.get_tournament_id_in_db(tournament)
-        new_current_round = tournament.current_round + 1
-        self.tournament_db.update({"current_round": new_current_round},
-                                  doc_ids=[tournament_id])
+        if tournament.current_round != tournament.number_of_rounds:
+            new_current_round = tournament.current_round + 1
+            self.tournament_db.update({"current_round": new_current_round}, doc_ids=[tournament_id])
 
     def update_player_points_in_db(self, tournament):
         """
